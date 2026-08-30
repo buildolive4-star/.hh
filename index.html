@@ -48,14 +48,14 @@
             min-height: 56.25vw; 
         }
 
-        /* Click-blocking transparent overlay to hide and prevent Cloudinary controls */
+        /* Click-blocking transparent overlay to isolate video interactions */
         .video-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(4, 4, 10, 0.45); /* Soft cinematic tint */
+            background: rgba(4, 4, 10, 0.45); 
             z-index: -5;
             pointer-events: auto; 
         }
@@ -202,6 +202,7 @@
             pointer-events: none;
             --poster-color: transparent;
             background-color: transparent;
+            will-change: transform, left, bottom;
             transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), left 0.15s cubic-bezier(0.25, 1, 0.5, 1), bottom 0.15s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
@@ -221,6 +222,7 @@
             box-shadow: none; 
             opacity: 0;
             transform: translateY(-50%) scale(0.95);
+            will-change: transform, opacity;
             transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
             z-index: 100;
             pointer-events: none; 
@@ -286,9 +288,10 @@
             box-shadow: none; 
             pointer-events: none; 
             z-index: 1500; 
-            transform: translate(-50%, -50%); 
+            transform: translate3d(-50%, -50%, 0); 
             left: 50%;
             top: 50%;
+            will-change: transform, left, top;
             transition: transform 0.08s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
@@ -301,9 +304,10 @@
             border-radius: 50%;
             pointer-events: none;
             z-index: 1450; 
-            transform: translate(-50%, -50%);
+            transform: translate3d(-50%, -50%, 0);
             mix-blend-mode: screen;
             filter: blur(5px);
+            will-change: left, top;
             transition: left 0.12s cubic-bezier(0.25, 1, 0.5, 1), top 0.12s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
@@ -325,7 +329,7 @@
             animation: flyHover 4s ease-in-out infinite; 
         }
 
-        /* Statistics column styling (Optimized for Mobile/Desktop) */
+        /* Statistics column styling */
         .stats-column {
             display: flex;
             flex-direction: row; 
@@ -334,6 +338,7 @@
             max-width: 500px;
             justify-content: center;
             opacity: 1;
+            will-change: opacity;
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
@@ -437,6 +442,7 @@
             z-index: 1;
             border-radius: 12px;
             opacity: 0;
+            will-change: opacity;
             transition: opacity 0.5s ease;
         }
 
@@ -451,7 +457,7 @@
             image-rendering: auto;
             backface-visibility: hidden;
             transform: translate3d(0, 0, 0);
-            will-change: transform;
+            will-change: transform, opacity;
         }
 
         /* Description lower viewport */
@@ -471,6 +477,7 @@
             color: #00f2fe;
             margin-bottom: 12px;
             text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+            will-change: opacity;
             transition: opacity 0.4s ease;
         }
 
@@ -479,6 +486,7 @@
             color: #e0e0f5; 
             line-height: 1.7;
             margin-bottom: 10px;
+            will-change: opacity;
             transition: opacity 0.4s ease;
         }
 
@@ -1136,7 +1144,7 @@
                 beeGlow.style.left = `${currentX}px`;
                 beeGlow.style.top = `${currentY}px`;
                 
-                beeBox.style.transform = `translate(-50%, -50%) rotateY(${tiltX * 1.5}deg) rotateX(${tiltY * 1.5}deg) rotateZ(${tiltX * 0.5}deg)`;
+                beeBox.style.transform = `translate3d(-50%, -50%, 0) rotateY(${tiltX * 1.5}deg) rotateX(${tiltY * 1.5}deg) rotateZ(${tiltX * 0.5}deg)`;
 
                 requestAnimationFrame(animateFlightFollower);
             };
@@ -1235,7 +1243,7 @@
 
                 rocket.style.bottom = `${yPixels}px`;
                 rocket.style.left = `${xPercent}%`;
-                rocket.style.transform = `translate(-50%, 50%) rotate(${rotateDeg}deg)`;
+                rocket.style.transform = `translate3d(-50%, 50%, 0) rotate(${rotateDeg}deg)`;
             }
 
             // Section 3 (scroll-section-1, Auto playing video, scroll-dependent overlay)
