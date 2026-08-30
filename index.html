@@ -196,7 +196,7 @@
             position: absolute;
             top: 74%; /* Vertically centered in the empty section below the 55vh video */
             left: 50%;
-            transform: translate(-50%, -50%) scale(0) rotate(0deg);
+            transform: translate(-50%, -50%) scale(0);
             width: clamp(320px, 60vw, 650px); /* Enlarged to beautifully fit and fill the empty section */
             height: clamp(320px, 60vw, 650px); /* Enlarged to match */
             display: flex;
@@ -216,6 +216,43 @@
             animation: flowerGlow 4s ease-in-out infinite;
             image-rendering: -webkit-optimize-contrast;
             backface-visibility: hidden;
+        }
+
+        /* Transparent Button Styled for Center of Flower */
+        .why-choose-us-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(4, 4, 10, 0.6);
+            border: 2px solid rgba(0, 242, 254, 0.8);
+            color: #00f2fe;
+            padding: 14px 32px;
+            font-size: clamp(13px, 3.5vw, 17px);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 30px;
+            text-decoration: none;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2), inset 0 0 10px rgba(0, 242, 254, 0.1);
+            z-index: 1200;
+            white-space: nowrap;
+            text-shadow: 0 0 8px rgba(0, 242, 254, 0.5);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .why-choose-us-btn:hover {
+            background: #00f2fe;
+            color: #04040a;
+            border-color: #00f2fe;
+            box-shadow: 0 0 25px #00f2fe, 0 0 50px rgba(0, 242, 254, 0.5);
+            transform: translate(-50%, -50%) scale(1.05);
+            text-shadow: none;
         }
 
         /* Dynamic pulsing flower glow */
@@ -810,9 +847,10 @@
                 <img id="sequence-img-1" src="" alt="Sequence Frame 1">
             </div>
 
-            <!-- Beautiful Floating Flower Element (Zoom & Spin) -->
+            <!-- Beautiful Floating Flower Element (Zoom & Spin) with Transparent Button -->
             <div id="flower-container" class="flower-container">
                 <img id="flower-img" src="https://i.ibb.co/DDpy6KwS/1000636620-removebg-preview.png" alt="Glowing Flower Element">
+                <a href="s.html" id="why-choose-us-btn" class="why-choose-us-btn">Why Choose Us</a>
             </div>
 
             <!-- Dynamic Info Card Overlay -->
@@ -1324,7 +1362,19 @@
             const s1Fraction = (scrollTop - s1Top) / (s1Height - window.innerHeight);
             const s1Bounded = Math.max(0, Math.min(1, s1Fraction));
 
-            updateOverlay(s1Bounded, overlay1, overlayTitle1, overlayDesc1);
+            // Determine if we are reaching the final flower open state
+            const isFinalFlowerState = (s1Bounded >= 0.70);
+
+            if (isFinalFlowerState) {
+                // Fully hide section text when the flower is fully open
+                overlay1.classList.remove("active");
+                overlay1.style.opacity = "0";
+                overlay1.style.pointerEvents = "none";
+            } else {
+                // Normal text overlay behavior before the final state
+                updateOverlay(s1Bounded, overlay1, overlayTitle1, overlayDesc1);
+                overlay1.style.pointerEvents = "auto";
+            }
 
             if (s1Bounded > 0.05) {
                 statsColumn1.classList.add("hide-stats");
@@ -1334,37 +1384,48 @@
 
             // Real-time Flower animation logic based on Section 3 scroll
             const flower = document.getElementById("flower-container");
+            const whyChooseBtn = document.getElementById("why-choose-us-btn");
+
             if (flower) {
                 let scale = 0;
                 let opacity = 0;
                 let rotation = 0;
 
                 // Scroll Timeline Mapping:
-                // 1. Zoom In & Continuously Rotate from 0.0 to 0.72 progress
-                if (s1Bounded < 0.72) {
-                    const progress = s1Bounded / 0.72; // Normalized (0 to 1)
-                    scale = progress * 1.45; // Grows up to a beautiful large size
-                    opacity = Math.min(1, progress * 1.8); // Smoothly fades in
-                    rotation = s1Bounded * 1080; // Spins rapidly during zoom-in
+                if (s1Bounded < 0.70) {
+                    const progress = s1Bounded / 0.70; // Normalized (0 to 1)
+                    scale = progress * 1.45; // Grows smoothly to a beautiful size
+                    opacity = Math.min(1, progress * 1.8); // Fades in cleanly
+                    rotation = s1Bounded * 1080; // Spins on entry
+                    
+                    if (whyChooseBtn) {
+                        whyChooseBtn.style.opacity = "0";
+                        whyChooseBtn.style.pointerEvents = "none";
+                    }
+                    flower.style.pointerEvents = "none";
                 } 
-                // 2. Maintained State (Large, fully set & stabilized) from 0.72 to 0.88 progress
-                else if (s1Bounded <= 0.88) {
-                    scale = 1.45; // Locked at maximum beautiful size
+                // Final state (0.70 to 1.0): Flower remains fully open, text hides, button appears
+                else {
+                    scale = 1.45; 
                     opacity = 1;
                     // Slow majestic ongoing rotation while staying large
-                    rotation = (0.72 * 1080) + (s1Bounded - 0.72) * 120; 
-                } 
-                // 3. Zoom Out & Vanish into Center from 0.88 to 1.0 progress
-                else {
-                    const progress = (s1Bounded - 0.88) / 0.12; // Normalized (0 to 1)
-                    scale = 1.45 * (1 - progress); // Shrinks back into the center
-                    opacity = 1 - progress; // Smoothly fades out to 0
-                    rotation = (0.72 * 1080) + (0.16 * 120) + (progress * 90); // Final twist on disappear
+                    rotation = (0.70 * 1080) + (s1Bounded - 0.70) * 150; 
+                    
+                    if (whyChooseBtn) {
+                        whyChooseBtn.style.opacity = "1";
+                        whyChooseBtn.style.pointerEvents = "auto";
+                    }
+                    flower.style.pointerEvents = "auto";
                 }
 
-                // Apply styles to DOM dynamically
-                flower.style.transform = `translate(-50%, -50%) scale(${scale}) rotate(${rotation}deg)`;
+                // Apply scales to container and spin dynamically to image layer only
+                flower.style.transform = `translate(-50%, -50%) scale(${scale})`;
                 flower.style.opacity = opacity;
+                
+                const flowerImg = document.getElementById("flower-img");
+                if (flowerImg) {
+                    flowerImg.style.transform = `rotate(${rotation}deg)`;
+                }
             }
         }
 
