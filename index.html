@@ -175,14 +175,12 @@
             z-index: 10;
         }
 
-        /* Optimized for cinematic maximum resolution rendering */
-        .video-container img {
+        /* HTML5 Canvas styles optimized for zero-latency graphics rendering */
+        .video-container canvas {
             width: 100%;
             height: 100%;
             object-fit: contain;
             display: none; 
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: auto;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
             transform: translate3d(0, 0, 0);
@@ -565,11 +563,6 @@
             animation: spin 1s ease-in-out infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Responsive Media Queries for Mobile/Tablet Optimization */
         @media (max-width: 768px) {
             .scroll-text-overlay {
                 left: 5%;
@@ -672,13 +665,13 @@
                 interaction-prompt="none">
             </model-viewer>
 
-            <!-- Upper Portion: Image Sequence -->
+            <!-- Upper Portion: Image Sequence inside HTML5 Canvas -->
             <div class="video-container">
                 <div id="loader-container-3" class="loading-box">
                     <div class="spinner"></div>
                     <div class="loader-text">BUFFERING SEQUENCER 1 <span id="progress-3">0%</span></div>
                 </div>
-                <img id="sequence-img-3" src="" alt="Sequence Frame 3">
+                <canvas id="sequence-canvas-3"></canvas>
             </div>
 
             <!-- Dynamic Info Card Overlay -->
@@ -741,13 +734,13 @@
     <div class="scroll-container" id="scroll-section-1">
         <div class="sticky-wrapper">
             
-            <!-- Upper Portion: Image Sequence -->
+            <!-- Upper Portion: Image Sequence inside HTML5 Canvas -->
             <div class="video-container">
                 <div id="loader-container-1" class="loading-box">
                     <div class="spinner"></div>
                     <div class="loader-text">BUFFERING SEQUENCER 3 <span id="progress-1">0%</span></div>
                 </div>
-                <img id="sequence-img-1" src="" alt="Sequence Frame 1">
+                <canvas id="sequence-canvas-1"></canvas>
             </div>
 
             <!-- Dynamic Info Card Overlay -->
@@ -859,7 +852,7 @@
         const totalFrames1 = 240;
         const zipFileName1 = "ezgif-69d75f05336c06b0-jpg.zip"; 
 
-        const imgElement3 = document.getElementById("sequence-img-3");
+        const canvas3 = document.getElementById("sequence-canvas-3");
         const loaderContainer3 = document.getElementById("loader-container-3");
         const progressText3 = document.getElementById("progress-3");
         const scrollSection3 = document.getElementById("scroll-section-3");
@@ -870,7 +863,7 @@
         const overlayTitle3 = document.getElementById("scroll-text-title-3");
         const overlayDesc3 = document.getElementById("scroll-text-desc-3");
 
-        const imgElement1 = document.getElementById("sequence-img-1");
+        const canvas1 = document.getElementById("sequence-canvas-1");
         const loaderContainer1 = document.getElementById("loader-container-1");
         const progressText1 = document.getElementById("progress-1");
         const scrollSection1 = document.getElementById("scroll-section-1");
@@ -887,8 +880,9 @@
         const beeViewer = document.getElementById("bee-viewer");
         const beeLoader = document.getElementById("bee-loader");
 
-        const frameURLs1 = [];
-        const frameURLs3 = [];
+        // High-Performance memory-cached Image Arrays (GPU Ready)
+        const frameImages3 = [];
+        const frameImages1 = [];
 
         // Auto play tracking for Section 3 Sequence
         let isSec1Loaded = false;
@@ -919,7 +913,62 @@
             return `ezgif-frame-${paddedIndex}.jpg`;
         };
 
-        // Extract ZIP for Section 1 (Top Section - Manual Scroll)
+        // Renders specific cached image frame on Canvas 3 (with smart closest-frame fallback during rapid scroll)
+        function drawFrame3(index) {
+            const img = frameImages3[index];
+            if (img && img.complete) {
+                const ctx = canvas3.getContext('2d');
+                ctx.clearRect(0, 0, canvas3.width, canvas3.height);
+                ctx.drawImage(img, 0, 0, canvas3.width, canvas3.height);
+            } else {
+                // If frame is not fully loaded yet, fallback to the closest complete frame
+                for (let offset = 1; offset < totalFrames3; offset++) {
+                    const prev = index - offset;
+                    const next = index + offset;
+                    if (prev >= 1 && frameImages3[prev] && frameImages3[prev].complete) {
+                        const ctx = canvas3.getContext('2d');
+                        ctx.clearRect(0, 0, canvas3.width, canvas3.height);
+                        ctx.drawImage(frameImages3[prev], 0, 0, canvas3.width, canvas3.height);
+                        break;
+                    }
+                    if (next <= totalFrames3 && frameImages3[next] && frameImages3[next].complete) {
+                        const ctx = canvas3.getContext('2d');
+                        ctx.clearRect(0, 0, canvas3.width, canvas3.height);
+                        ctx.drawImage(frameImages3[next], 0, 0, canvas3.width, canvas3.height);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Renders specific cached image frame on Canvas 1 (with closest-frame fallback)
+        function drawFrame1(index) {
+            const img = frameImages1[index];
+            if (img && img.complete) {
+                const ctx = canvas1.getContext('2d');
+                ctx.clearRect(0, 0, canvas1.width, canvas1.height);
+                ctx.drawImage(img, 0, 0, canvas1.width, canvas1.height);
+            } else {
+                for (let offset = 1; offset < totalFrames1; offset++) {
+                    const prev = index - offset;
+                    const next = index + offset;
+                    if (prev >= 1 && frameImages1[prev] && frameImages1[prev].complete) {
+                        const ctx = canvas1.getContext('2d');
+                        ctx.clearRect(0, 0, canvas1.width, canvas1.height);
+                        ctx.drawImage(frameImages1[prev], 0, 0, canvas1.width, canvas1.height);
+                        break;
+                    }
+                    if (next <= totalFrames1 && frameImages1[next] && frameImages1[next].complete) {
+                        const ctx = canvas1.getContext('2d');
+                        ctx.clearRect(0, 0, canvas1.width, canvas1.height);
+                        ctx.drawImage(frameImages1[next], 0, 0, canvas1.width, canvas1.height);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Extract ZIP for Section 1 (Top Section - Manual Scroll Canvas)
         async function loadAndExtractZip3() {
             try {
                 const response = await fetch(zipFileName3);
@@ -929,6 +978,8 @@
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const zip = await JSZip.loadAsync(arrayBuffer);
+
+                let firstFrameConfigured = false;
 
                 for (let i = 1; i <= totalFrames3; i++) {
                     const fileName = getSec3FrameName(i);
@@ -945,10 +996,24 @@
                     if (file) {
                         const blob = await file.async("blob");
                         const objectURL = URL.createObjectURL(blob);
-                        frameURLs3[i] = objectURL;
-
+                        
                         const imgObj = new Image();
                         imgObj.src = objectURL;
+                        
+                        imgObj.onload = () => {
+                            frameImages3[i] = imgObj;
+                            
+                            // Initialize Canvas sizing to match the image dimensions instantly
+                            if (!firstFrameConfigured) {
+                                canvas3.width = imgObj.naturalWidth || 1920;
+                                canvas3.height = imgObj.naturalHeight || 1080;
+                                canvas3.style.display = "block";
+                                loaderContainer3.style.display = "none";
+                                drawFrame3(1);
+                                firstFrameConfigured = true;
+                            }
+                        };
+
                         if (imgObj.decode) {
                             imgObj.decode().catch(() => {});
                         }
@@ -958,12 +1023,7 @@
                     progressText3.innerText = `${percent}%`;
                 }
 
-                if (frameURLs3[1]) {
-                    imgElement3.src = frameURLs3[1];
-                    imgElement3.style.display = "block";
-                    loaderContainer3.style.display = "none";
-                    frameCounter3.innerText = `1 / ${totalFrames3}`;
-                }
+                frameCounter3.innerText = `1 / ${totalFrames3}`;
 
             } catch (error) {
                 console.error("Section 3 extraction error:", error);
@@ -971,7 +1031,7 @@
             }
         }
 
-        // Extract ZIP for Section 3 (Bottom Section - Auto Play)
+        // Extract ZIP for Section 3 (Bottom Section - Auto Play Canvas)
         async function loadAndExtractZip1() {
             try {
                 const response = await fetch(zipFileName1);
@@ -981,6 +1041,8 @@
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const zip = await JSZip.loadAsync(arrayBuffer);
+
+                let firstFrameConfigured = false;
 
                 for (let i = 1; i <= totalFrames1; i++) {
                     const fileName = getSec1FrameName(i);
@@ -997,10 +1059,23 @@
                     if (file) {
                         const blob = await file.async("blob");
                         const objectURL = URL.createObjectURL(blob);
-                        frameURLs1[i] = objectURL;
-
+                        
                         const imgObj = new Image();
                         imgObj.src = objectURL;
+                        
+                        imgObj.onload = () => {
+                            frameImages1[i] = imgObj;
+                            
+                            if (!firstFrameConfigured) {
+                                canvas1.width = imgObj.naturalWidth || 1920;
+                                canvas1.height = imgObj.naturalHeight || 1080;
+                                canvas1.style.display = "block";
+                                loaderContainer1.style.display = "none";
+                                drawFrame1(1);
+                                firstFrameConfigured = true;
+                            }
+                        };
+
                         if (imgObj.decode) {
                             imgObj.decode().catch(() => {});
                         }
@@ -1010,15 +1085,9 @@
                     progressText1.innerText = `${percent}%`;
                 }
 
-                if (frameURLs1[1]) {
-                    imgElement1.src = frameURLs1[1];
-                    imgElement1.style.display = "block";
-                    loaderContainer1.style.display = "none";
-                    
-                    isSec1Loaded = true;
-                    // Auto Play Loop starting point
-                    requestAnimationFrame(animateSection1Video);
-                }
+                isSec1Loaded = true;
+                // Auto Play Loop starting point
+                requestAnimationFrame(animateSection1Video);
 
             } catch (error) {
                 console.error("Section 1 extraction error:", error);
@@ -1036,11 +1105,9 @@
             if (elapsed >= sec1FrameInterval) {
                 sec1CurrentFrame = (sec1CurrentFrame % totalFrames1) + 1;
                 
-                if (frameURLs1[sec1CurrentFrame]) {
-                    imgElement1.src = frameURLs1[sec1CurrentFrame];
-                    frameCounter1.innerText = `${sec1CurrentFrame} / ${totalFrames1}`;
-                    percentCounter1.innerText = `${Math.round((sec1CurrentFrame / totalFrames1) * 100)}%`;
-                }
+                drawFrame1(sec1CurrentFrame);
+                frameCounter1.innerText = `${sec1CurrentFrame} / ${totalFrames1}`;
+                percentCounter1.innerText = `${Math.round((sec1CurrentFrame / totalFrames1) * 100)}%`;
                 
                 sec1LastFrameTime = timestamp - (elapsed % sec1FrameInterval);
             }
@@ -1174,13 +1241,18 @@
 
         let scrollScheduled = false;
 
+        // Binds scroll, touch-move, and pointer drag triggers to force canvas frames updates during active touch drags
         function initScrollListener() {
-            window.addEventListener('scroll', () => {
+            const triggerUpdate = () => {
                 if (!scrollScheduled) {
                     scrollScheduled = true;
                     requestAnimationFrame(updateScrollPhysics);
                 }
-            }, { passive: true });
+            };
+
+            window.addEventListener('scroll', triggerUpdate, { passive: true });
+            window.addEventListener('touchmove', triggerUpdate, { passive: true });
+            window.addEventListener('pointermove', triggerUpdate, { passive: true });
         }
 
         function updateScrollPhysics() {
@@ -1197,18 +1269,18 @@
             lastScrollY = currentScrollY;
             targetY += scrollVelocity * 0.25;
 
-            // Section 1 (scroll-section-3, 192 frames, Manual Scroll)
+            // Section 1 (scroll-section-3, 192 frames, Manual Scroll Canvas)
             const s3Top = scrollSection3.offsetTop;
             const s3Height = scrollSection3.scrollHeight;
             const s3Fraction = (scrollTop - s3Top) / (s3Height - window.innerHeight);
             const s3Bounded = Math.max(0, Math.min(1, s3Fraction));
             const frameIndex3 = Math.max(1, Math.min(totalFrames3, Math.ceil(s3Bounded * totalFrames3)));
 
-            if (frameURLs3[frameIndex3]) {
-                imgElement3.src = frameURLs3[frameIndex3];
-                frameCounter3.innerText = `${frameIndex3} / ${totalFrames3}`;
-                percentCounter3.innerText = `${Math.round(s3Bounded * 100)}%`;
-            }
+            // Draws decoded frames instantaneously on Canvas
+            drawFrame3(frameIndex3);
+            frameCounter3.innerText = `${frameIndex3} / ${totalFrames3}`;
+            percentCounter3.innerText = `${Math.round(s3Bounded * 100)}%`;
+            
             updateOverlay(s3Bounded, overlay3, overlayTitle3, overlayDesc3);
 
             if (s3Bounded > 0.05) {
