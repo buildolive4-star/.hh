@@ -48,14 +48,14 @@
             min-height: 56.25vw; 
         }
 
-        /* Click-blocking transparent overlay to isolate video interactions */
+        /* Click-blocking transparent overlay to hide and prevent Cloudinary controls */
         .video-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(4, 4, 10, 0.45); 
+            background: rgba(4, 4, 10, 0.45); /* Soft cinematic tint */
             z-index: -5;
             pointer-events: auto; 
         }
@@ -134,6 +134,7 @@
 
         #scroll-section-1 {
             margin-top: 0px; 
+            height: 520vh; /* Smoothly lengthened for better flower transition track */
         }
 
         /* Sticky Wrapper with Mobile Optimization */
@@ -175,17 +176,59 @@
             z-index: 10;
         }
 
-        /* HTML5 Canvas styles optimized for zero-latency graphics rendering */
-        .video-container canvas {
+        /* Optimized for cinematic maximum resolution rendering */
+        .video-container img {
             width: 100%;
             height: 100%;
             object-fit: contain;
             display: none; 
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: auto;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
             transform: translate3d(0, 0, 0);
             -webkit-transform: translate3d(0, 0, 0);
             will-change: transform;
+        }
+
+        /* Centered & Enlarged Flower Container in empty space below the video */
+        .flower-container {
+            position: absolute;
+            top: 74%; /* Vertically centered in the empty section below the 55vh video */
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0) rotate(0deg);
+            width: clamp(320px, 60vw, 650px); /* Enlarged to beautifully fit and fill the empty section */
+            height: clamp(320px, 60vw, 650px); /* Enlarged to match */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1100;
+            pointer-events: none;
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+
+        .flower-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.4)) drop-shadow(0 0 40px rgba(79, 172, 254, 0.2));
+            animation: flowerGlow 4s ease-in-out infinite;
+            image-rendering: -webkit-optimize-contrast;
+            backface-visibility: hidden;
+        }
+
+        /* Dynamic pulsing flower glow */
+        @keyframes flowerGlow {
+            0% {
+                filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.4)) drop-shadow(0 0 30px rgba(79, 172, 254, 0.2));
+            }
+            50% {
+                filter: drop-shadow(0 0 25px rgba(0, 242, 254, 0.6)) drop-shadow(0 0 50px rgba(79, 172, 254, 0.4));
+            }
+            100% {
+                filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.4)) drop-shadow(0 0 30px rgba(79, 172, 254, 0.2));
+            }
         }
 
         /* 3D Rocket specific layout and smooth transitions */
@@ -200,7 +243,6 @@
             pointer-events: none;
             --poster-color: transparent;
             background-color: transparent;
-            will-change: transform, left, bottom;
             transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), left 0.15s cubic-bezier(0.25, 1, 0.5, 1), bottom 0.15s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
@@ -220,7 +262,6 @@
             box-shadow: none; 
             opacity: 0;
             transform: translateY(-50%) scale(0.95);
-            will-change: transform, opacity;
             transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
             z-index: 100;
             pointer-events: none; 
@@ -286,10 +327,9 @@
             box-shadow: none; 
             pointer-events: none; 
             z-index: 1500; 
-            transform: translate3d(-50%, -50%, 0); 
+            transform: translate(-50%, -50%); 
             left: 50%;
             top: 50%;
-            will-change: transform, left, top;
             transition: transform 0.08s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
@@ -302,10 +342,9 @@
             border-radius: 50%;
             pointer-events: none;
             z-index: 1450; 
-            transform: translate3d(-50%, -50%, 0);
+            transform: translate(-50%, -50%);
             mix-blend-mode: screen;
             filter: blur(5px);
-            will-change: left, top;
             transition: left 0.12s cubic-bezier(0.25, 1, 0.5, 1), top 0.12s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
@@ -327,7 +366,7 @@
             animation: flyHover 4s ease-in-out infinite; 
         }
 
-        /* Statistics column styling */
+        /* Statistics column styling (Optimized for Mobile/Desktop) */
         .stats-column {
             display: flex;
             flex-direction: row; 
@@ -336,7 +375,6 @@
             max-width: 500px;
             justify-content: center;
             opacity: 1;
-            will-change: opacity;
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
@@ -440,7 +478,6 @@
             z-index: 1;
             border-radius: 12px;
             opacity: 0;
-            will-change: opacity;
             transition: opacity 0.5s ease;
         }
 
@@ -455,7 +492,7 @@
             image-rendering: auto;
             backface-visibility: hidden;
             transform: translate3d(0, 0, 0);
-            will-change: transform, opacity;
+            will-change: transform;
         }
 
         /* Description lower viewport */
@@ -475,7 +512,6 @@
             color: #00f2fe;
             margin-bottom: 12px;
             text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
-            will-change: opacity;
             transition: opacity 0.4s ease;
         }
 
@@ -484,7 +520,6 @@
             color: #e0e0f5; 
             line-height: 1.7;
             margin-bottom: 10px;
-            will-change: opacity;
             transition: opacity 0.4s ease;
         }
 
@@ -563,6 +598,33 @@
             animation: spin 1s ease-in-out infinite;
         }
 
+        /* Beautiful Dynamic Footer Spacer Section */
+        .footer-spacer {
+            min-height: 40vh;
+            background: linear-gradient(180deg, transparent, rgba(4, 4, 10, 0.95));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 1px solid rgba(0, 242, 254, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-content {
+            color: #72729a;
+            font-size: clamp(9px, 2.5vw, 12px);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+            text-align: center;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Media Queries for Mobile/Tablet Optimization */
         @media (max-width: 768px) {
             .scroll-text-overlay {
                 left: 5%;
@@ -595,6 +657,11 @@
             }
             .next-section {
                 padding: 50px 15px;
+            }
+            .flower-container {
+                width: clamp(240px, 70vw, 380px);
+                height: clamp(240px, 70vw, 380px);
+                top: 73%; /* Perfect alignment for mobile */
             }
         }
     </style>
@@ -665,13 +732,13 @@
                 interaction-prompt="none">
             </model-viewer>
 
-            <!-- Upper Portion: Image Sequence inside HTML5 Canvas -->
+            <!-- Upper Portion: Image Sequence -->
             <div class="video-container">
                 <div id="loader-container-3" class="loading-box">
                     <div class="spinner"></div>
                     <div class="loader-text">BUFFERING SEQUENCER 1 <span id="progress-3">0%</span></div>
                 </div>
-                <canvas id="sequence-canvas-3"></canvas>
+                <img id="sequence-img-3" src="" alt="Sequence Frame 3">
             </div>
 
             <!-- Dynamic Info Card Overlay -->
@@ -734,13 +801,18 @@
     <div class="scroll-container" id="scroll-section-1">
         <div class="sticky-wrapper">
             
-            <!-- Upper Portion: Image Sequence inside HTML5 Canvas -->
+            <!-- Upper Portion: Image Sequence -->
             <div class="video-container">
                 <div id="loader-container-1" class="loading-box">
                     <div class="spinner"></div>
                     <div class="loader-text">BUFFERING SEQUENCER 3 <span id="progress-1">0%</span></div>
                 </div>
-                <canvas id="sequence-canvas-1"></canvas>
+                <img id="sequence-img-1" src="" alt="Sequence Frame 1">
+            </div>
+
+            <!-- Beautiful Floating Flower Element (Zoom & Spin) -->
+            <div id="flower-container" class="flower-container">
+                <img id="flower-img" src="https://i.ibb.co/DDpy6KwS/1000636620-removebg-preview.png" alt="Glowing Flower Element">
             </div>
 
             <!-- Dynamic Info Card Overlay -->
@@ -765,6 +837,13 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- Beautiful Final Spacer/Footer Section to allow smooth exit scroll -->
+    <div class="footer-spacer">
+        <div class="footer-content">
+            <p>End of Cinematic Showcase • Designed for smooth transitions</p>
         </div>
     </div>
 
@@ -852,7 +931,7 @@
         const totalFrames1 = 240;
         const zipFileName1 = "ezgif-69d75f05336c06b0-jpg.zip"; 
 
-        const canvas3 = document.getElementById("sequence-canvas-3");
+        const imgElement3 = document.getElementById("sequence-img-3");
         const loaderContainer3 = document.getElementById("loader-container-3");
         const progressText3 = document.getElementById("progress-3");
         const scrollSection3 = document.getElementById("scroll-section-3");
@@ -863,7 +942,7 @@
         const overlayTitle3 = document.getElementById("scroll-text-title-3");
         const overlayDesc3 = document.getElementById("scroll-text-desc-3");
 
-        const canvas1 = document.getElementById("sequence-canvas-1");
+        const imgElement1 = document.getElementById("sequence-img-1");
         const loaderContainer1 = document.getElementById("loader-container-1");
         const progressText1 = document.getElementById("progress-1");
         const scrollSection1 = document.getElementById("scroll-section-1");
@@ -880,9 +959,8 @@
         const beeViewer = document.getElementById("bee-viewer");
         const beeLoader = document.getElementById("bee-loader");
 
-        // High-Performance memory-cached Image Arrays (GPU Ready)
-        const frameImages3 = [];
-        const frameImages1 = [];
+        const frameURLs1 = [];
+        const frameURLs3 = [];
 
         // Auto play tracking for Section 3 Sequence
         let isSec1Loaded = false;
@@ -913,62 +991,7 @@
             return `ezgif-frame-${paddedIndex}.jpg`;
         };
 
-        // Renders specific cached image frame on Canvas 3 (with smart closest-frame fallback during rapid scroll)
-        function drawFrame3(index) {
-            const img = frameImages3[index];
-            if (img && img.complete) {
-                const ctx = canvas3.getContext('2d');
-                ctx.clearRect(0, 0, canvas3.width, canvas3.height);
-                ctx.drawImage(img, 0, 0, canvas3.width, canvas3.height);
-            } else {
-                // If frame is not fully loaded yet, fallback to the closest complete frame
-                for (let offset = 1; offset < totalFrames3; offset++) {
-                    const prev = index - offset;
-                    const next = index + offset;
-                    if (prev >= 1 && frameImages3[prev] && frameImages3[prev].complete) {
-                        const ctx = canvas3.getContext('2d');
-                        ctx.clearRect(0, 0, canvas3.width, canvas3.height);
-                        ctx.drawImage(frameImages3[prev], 0, 0, canvas3.width, canvas3.height);
-                        break;
-                    }
-                    if (next <= totalFrames3 && frameImages3[next] && frameImages3[next].complete) {
-                        const ctx = canvas3.getContext('2d');
-                        ctx.clearRect(0, 0, canvas3.width, canvas3.height);
-                        ctx.drawImage(frameImages3[next], 0, 0, canvas3.width, canvas3.height);
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Renders specific cached image frame on Canvas 1 (with closest-frame fallback)
-        function drawFrame1(index) {
-            const img = frameImages1[index];
-            if (img && img.complete) {
-                const ctx = canvas1.getContext('2d');
-                ctx.clearRect(0, 0, canvas1.width, canvas1.height);
-                ctx.drawImage(img, 0, 0, canvas1.width, canvas1.height);
-            } else {
-                for (let offset = 1; offset < totalFrames1; offset++) {
-                    const prev = index - offset;
-                    const next = index + offset;
-                    if (prev >= 1 && frameImages1[prev] && frameImages1[prev].complete) {
-                        const ctx = canvas1.getContext('2d');
-                        ctx.clearRect(0, 0, canvas1.width, canvas1.height);
-                        ctx.drawImage(frameImages1[prev], 0, 0, canvas1.width, canvas1.height);
-                        break;
-                    }
-                    if (next <= totalFrames1 && frameImages1[next] && frameImages1[next].complete) {
-                        const ctx = canvas1.getContext('2d');
-                        ctx.clearRect(0, 0, canvas1.width, canvas1.height);
-                        ctx.drawImage(frameImages1[next], 0, 0, canvas1.width, canvas1.height);
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Extract ZIP for Section 1 (Top Section - Manual Scroll Canvas)
+        // Extract ZIP for Section 1 (Top Section - Manual Scroll)
         async function loadAndExtractZip3() {
             try {
                 const response = await fetch(zipFileName3);
@@ -978,8 +1001,6 @@
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const zip = await JSZip.loadAsync(arrayBuffer);
-
-                let firstFrameConfigured = false;
 
                 for (let i = 1; i <= totalFrames3; i++) {
                     const fileName = getSec3FrameName(i);
@@ -996,24 +1017,10 @@
                     if (file) {
                         const blob = await file.async("blob");
                         const objectURL = URL.createObjectURL(blob);
-                        
+                        frameURLs3[i] = objectURL;
+
                         const imgObj = new Image();
                         imgObj.src = objectURL;
-                        
-                        imgObj.onload = () => {
-                            frameImages3[i] = imgObj;
-                            
-                            // Initialize Canvas sizing to match the image dimensions instantly
-                            if (!firstFrameConfigured) {
-                                canvas3.width = imgObj.naturalWidth || 1920;
-                                canvas3.height = imgObj.naturalHeight || 1080;
-                                canvas3.style.display = "block";
-                                loaderContainer3.style.display = "none";
-                                drawFrame3(1);
-                                firstFrameConfigured = true;
-                            }
-                        };
-
                         if (imgObj.decode) {
                             imgObj.decode().catch(() => {});
                         }
@@ -1023,7 +1030,12 @@
                     progressText3.innerText = `${percent}%`;
                 }
 
-                frameCounter3.innerText = `1 / ${totalFrames3}`;
+                if (frameURLs3[1]) {
+                    imgElement3.src = frameURLs3[1];
+                    imgElement3.style.display = "block";
+                    loaderContainer3.style.display = "none";
+                    frameCounter3.innerText = `1 / ${totalFrames3}`;
+                }
 
             } catch (error) {
                 console.error("Section 3 extraction error:", error);
@@ -1031,7 +1043,7 @@
             }
         }
 
-        // Extract ZIP for Section 3 (Bottom Section - Auto Play Canvas)
+        // Extract ZIP for Section 3 (Bottom Section - Auto Play)
         async function loadAndExtractZip1() {
             try {
                 const response = await fetch(zipFileName1);
@@ -1041,8 +1053,6 @@
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const zip = await JSZip.loadAsync(arrayBuffer);
-
-                let firstFrameConfigured = false;
 
                 for (let i = 1; i <= totalFrames1; i++) {
                     const fileName = getSec1FrameName(i);
@@ -1059,23 +1069,10 @@
                     if (file) {
                         const blob = await file.async("blob");
                         const objectURL = URL.createObjectURL(blob);
-                        
+                        frameURLs1[i] = objectURL;
+
                         const imgObj = new Image();
                         imgObj.src = objectURL;
-                        
-                        imgObj.onload = () => {
-                            frameImages1[i] = imgObj;
-                            
-                            if (!firstFrameConfigured) {
-                                canvas1.width = imgObj.naturalWidth || 1920;
-                                canvas1.height = imgObj.naturalHeight || 1080;
-                                canvas1.style.display = "block";
-                                loaderContainer1.style.display = "none";
-                                drawFrame1(1);
-                                firstFrameConfigured = true;
-                            }
-                        };
-
                         if (imgObj.decode) {
                             imgObj.decode().catch(() => {});
                         }
@@ -1085,9 +1082,15 @@
                     progressText1.innerText = `${percent}%`;
                 }
 
-                isSec1Loaded = true;
-                // Auto Play Loop starting point
-                requestAnimationFrame(animateSection1Video);
+                if (frameURLs1[1]) {
+                    imgElement1.src = frameURLs1[1];
+                    imgElement1.style.display = "block";
+                    loaderContainer1.style.display = "none";
+                    
+                    isSec1Loaded = true;
+                    // Auto Play Loop starting point
+                    requestAnimationFrame(animateSection1Video);
+                }
 
             } catch (error) {
                 console.error("Section 1 extraction error:", error);
@@ -1105,9 +1108,11 @@
             if (elapsed >= sec1FrameInterval) {
                 sec1CurrentFrame = (sec1CurrentFrame % totalFrames1) + 1;
                 
-                drawFrame1(sec1CurrentFrame);
-                frameCounter1.innerText = `${sec1CurrentFrame} / ${totalFrames1}`;
-                percentCounter1.innerText = `${Math.round((sec1CurrentFrame / totalFrames1) * 100)}%`;
+                if (frameURLs1[sec1CurrentFrame]) {
+                    imgElement1.src = frameURLs1[sec1CurrentFrame];
+                    frameCounter1.innerText = `${sec1CurrentFrame} / ${totalFrames1}`;
+                    percentCounter1.innerText = `${Math.round((sec1CurrentFrame / totalFrames1) * 100)}%`;
+                }
                 
                 sec1LastFrameTime = timestamp - (elapsed % sec1FrameInterval);
             }
@@ -1211,7 +1216,7 @@
                 beeGlow.style.left = `${currentX}px`;
                 beeGlow.style.top = `${currentY}px`;
                 
-                beeBox.style.transform = `translate3d(-50%, -50%, 0) rotateY(${tiltX * 1.5}deg) rotateX(${tiltY * 1.5}deg) rotateZ(${tiltX * 0.5}deg)`;
+                beeBox.style.transform = `translate(-50%, -50%) rotateY(${tiltX * 1.5}deg) rotateX(${tiltY * 1.5}deg) rotateZ(${tiltX * 0.5}deg)`;
 
                 requestAnimationFrame(animateFlightFollower);
             };
@@ -1241,18 +1246,13 @@
 
         let scrollScheduled = false;
 
-        // Binds scroll, touch-move, and pointer drag triggers to force canvas frames updates during active touch drags
         function initScrollListener() {
-            const triggerUpdate = () => {
+            window.addEventListener('scroll', () => {
                 if (!scrollScheduled) {
                     scrollScheduled = true;
                     requestAnimationFrame(updateScrollPhysics);
                 }
-            };
-
-            window.addEventListener('scroll', triggerUpdate, { passive: true });
-            window.addEventListener('touchmove', triggerUpdate, { passive: true });
-            window.addEventListener('pointermove', triggerUpdate, { passive: true });
+            }, { passive: true });
         }
 
         function updateScrollPhysics() {
@@ -1269,18 +1269,18 @@
             lastScrollY = currentScrollY;
             targetY += scrollVelocity * 0.25;
 
-            // Section 1 (scroll-section-3, 192 frames, Manual Scroll Canvas)
+            // Section 1 (scroll-section-3, 192 frames, Manual Scroll)
             const s3Top = scrollSection3.offsetTop;
             const s3Height = scrollSection3.scrollHeight;
             const s3Fraction = (scrollTop - s3Top) / (s3Height - window.innerHeight);
             const s3Bounded = Math.max(0, Math.min(1, s3Fraction));
             const frameIndex3 = Math.max(1, Math.min(totalFrames3, Math.ceil(s3Bounded * totalFrames3)));
 
-            // Draws decoded frames instantaneously on Canvas
-            drawFrame3(frameIndex3);
-            frameCounter3.innerText = `${frameIndex3} / ${totalFrames3}`;
-            percentCounter3.innerText = `${Math.round(s3Bounded * 100)}%`;
-            
+            if (frameURLs3[frameIndex3]) {
+                imgElement3.src = frameURLs3[frameIndex3];
+                frameCounter3.innerText = `${frameIndex3} / ${totalFrames3}`;
+                percentCounter3.innerText = `${Math.round(s3Bounded * 100)}%`;
+            }
             updateOverlay(s3Bounded, overlay3, overlayTitle3, overlayDesc3);
 
             if (s3Bounded > 0.05) {
@@ -1315,7 +1315,7 @@
 
                 rocket.style.bottom = `${yPixels}px`;
                 rocket.style.left = `${xPercent}%`;
-                rocket.style.transform = `translate3d(-50%, 50%, 0) rotate(${rotateDeg}deg)`;
+                rocket.style.transform = `translate(-50%, 50%) rotate(${rotateDeg}deg)`;
             }
 
             // Section 3 (scroll-section-1, Auto playing video, scroll-dependent overlay)
@@ -1330,6 +1330,41 @@
                 statsColumn1.classList.add("hide-stats");
             } else {
                 statsColumn1.classList.remove("hide-stats");
+            }
+
+            // Real-time Flower animation logic based on Section 3 scroll
+            const flower = document.getElementById("flower-container");
+            if (flower) {
+                let scale = 0;
+                let opacity = 0;
+                let rotation = 0;
+
+                // Scroll Timeline Mapping:
+                // 1. Zoom In & Continuously Rotate from 0.0 to 0.72 progress
+                if (s1Bounded < 0.72) {
+                    const progress = s1Bounded / 0.72; // Normalized (0 to 1)
+                    scale = progress * 1.45; // Grows up to a beautiful large size
+                    opacity = Math.min(1, progress * 1.8); // Smoothly fades in
+                    rotation = s1Bounded * 1080; // Spins rapidly during zoom-in
+                } 
+                // 2. Maintained State (Large, fully set & stabilized) from 0.72 to 0.88 progress
+                else if (s1Bounded <= 0.88) {
+                    scale = 1.45; // Locked at maximum beautiful size
+                    opacity = 1;
+                    // Slow majestic ongoing rotation while staying large
+                    rotation = (0.72 * 1080) + (s1Bounded - 0.72) * 120; 
+                } 
+                // 3. Zoom Out & Vanish into Center from 0.88 to 1.0 progress
+                else {
+                    const progress = (s1Bounded - 0.88) / 0.12; // Normalized (0 to 1)
+                    scale = 1.45 * (1 - progress); // Shrinks back into the center
+                    opacity = 1 - progress; // Smoothly fades out to 0
+                    rotation = (0.72 * 1080) + (0.16 * 120) + (progress * 90); // Final twist on disappear
+                }
+
+                // Apply styles to DOM dynamically
+                flower.style.transform = `translate(-50%, -50%) scale(${scale}) rotate(${rotation}deg)`;
+                flower.style.opacity = opacity;
             }
         }
 
