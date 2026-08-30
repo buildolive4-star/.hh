@@ -11,6 +11,11 @@
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
     
     <style>
+        /* Global Smoothness Enhancements */
+        html {
+            scroll-behavior: smooth;
+        }
+
         * {
             box-sizing: border-box;
         }
@@ -22,6 +27,9 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: #ffffff;
             overflow-x: hidden;
+            /* Enhanced anti-aliasing for smoother font rendering */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* Fullscreen Video Background */
@@ -98,14 +106,16 @@
             font-size: clamp(9px, 2.5vw, 11px);
             letter-spacing: 1px;
             text-transform: uppercase;
-            transition: all 0.3s ease;
+            /* Upgraded smooth cinematic hover transition */
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
             box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
         }
 
         .nav-btn:hover {
             background: #00f2fe;
             color: #080810;
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
+            transform: translateY(-2px);
         }
 
         /* Top Glowing Progress Bar */
@@ -116,9 +126,10 @@
             height: 3px;
             width: 0%;
             background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%);
-            box-shadow: 0 0 10px #00f2fe;
+            box-shadow: 0 0 15px #00f2fe;
             z-index: 1000;
-            transition: width 0.1s ease-out;
+            /* Ultra smooth progress growth */
+            transition: width 0.15s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         /* Scroll Containers */
@@ -200,11 +211,12 @@
         /* Centered & Enlarged Flower Container - Optimized for Auto Entrance and Auto Rotation */
         .flower-container {
             position: absolute;
-            top: 50%; /* Centered vertically inside the sticky viewport area */
+            /* Perfectly centered for emergence directly from the middle */
+            top: 50%; 
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
-            width: clamp(320px, 60vw, 650px); /* Enlarged to beautifully fit and fill the empty section */
-            height: clamp(320px, 60vw, 650px); /* Enlarged to match */
+            width: clamp(320px, 60vw, 650px); 
+            height: clamp(320px, 60vw, 650px); 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -212,6 +224,8 @@
             pointer-events: auto; /* Active so that the button inside can be clicked */
             opacity: 0;
             will-change: transform, opacity;
+            /* EXTREMELY SMOOTH cinematic transition (Expo Out) for perfect pop-out effect */
+            transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1), opacity 1s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         /* State when Flower is automatically opened */
@@ -226,11 +240,13 @@
             filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.4)) drop-shadow(0 0 40px rgba(79, 172, 254, 0.2));
             image-rendering: -webkit-optimize-contrast;
             backface-visibility: hidden;
+            /* Smooth nested rotations */
+            transition: filter 1s ease;
         }
 
         /* Continuous Automatic Rotation Animation when opened */
         .flower-container.opened img#flower-img {
-            animation: flowerGlow 4s ease-in-out infinite, continuousRotateImg 15s linear infinite;
+            animation: flowerGlow 4s ease-in-out infinite, continuousRotateImg 20s linear infinite;
         }
 
         @keyframes continuousRotateImg {
@@ -257,7 +273,8 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             box-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
-            transition: all 0.4s ease, opacity 0.8s ease;
+            /* Upgraded smooth interactions */
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.8s ease;
             z-index: 1200;
             pointer-events: auto;
             opacity: 0;
@@ -267,8 +284,9 @@
         .choose-us-btn:hover {
             background: #00f2fe;
             color: #04040a;
-            box-shadow: 0 0 30px #00f2fe;
+            box-shadow: 0 0 40px rgba(0, 242, 254, 0.8);
             border-color: #00f2fe;
+            transform: translate(-50%, -50%) scale(1.05); /* Soft pop on hover */
         }
 
         /* Make button visible only when the flower is opened */
@@ -282,7 +300,7 @@
                 filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.4)) drop-shadow(0 0 30px rgba(79, 172, 254, 0.2));
             }
             50% {
-                filter: drop-shadow(0 0 25px rgba(0, 242, 254, 0.6)) drop-shadow(0 0 50px rgba(79, 172, 254, 0.4));
+                filter: drop-shadow(0 0 25px rgba(0, 242, 254, 0.7)) drop-shadow(0 0 60px rgba(79, 172, 254, 0.5));
             }
             100% {
                 filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.4)) drop-shadow(0 0 30px rgba(79, 172, 254, 0.2));
@@ -305,7 +323,7 @@
             box-shadow: none; 
             opacity: 0;
             transform: translateY(-50%) scale(0.95);
-            transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: opacity 0.6s cubic-bezier(0.19, 1, 0.22, 1), transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
             z-index: 100;
             pointer-events: none; 
         }
@@ -373,7 +391,8 @@
             transform: translate(-50%, -50%); 
             left: 50%;
             top: 50%;
-            transition: transform 0.08s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease; /* Smooth fade support added */
+            /* Removed CSS transform transition so JS RequestAnimationFrame lerping doesn't stutter */
+            transition: opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         /* Dynamic Neon Glow Light under the Bee */
@@ -388,7 +407,8 @@
             transform: translate(-50%, -50%);
             mix-blend-mode: screen;
             filter: blur(5px);
-            transition: left 0.12s cubic-bezier(0.25, 1, 0.5, 1), top 0.12s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease; /* Smooth fade support added */
+            /* Removed CSS left/top transition so JS Lerping takes over smoothly */
+            transition: opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         /* Flying Hover Cycle */
@@ -418,11 +438,12 @@
             max-width: 500px;
             justify-content: center;
             opacity: 1;
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transition: opacity 0.6s cubic-bezier(0.19, 1, 0.22, 1), transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         .stats-column.hide-stats {
             opacity: 0.15; 
+            transform: translateY(10px);
         }
 
         .stat-card {
@@ -494,6 +515,7 @@
             box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(255, 255, 255, 0.08);
             position: relative;
             margin-top: 20px;
+            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         /* Clipart upper viewport (16:9 Aspect Ratio Card) */
@@ -521,7 +543,7 @@
             z-index: 1;
             border-radius: 12px;
             opacity: 0;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         .clipart-box img#clipart-img {
@@ -555,7 +577,7 @@
             color: #00f2fe;
             margin-bottom: 12px;
             text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
-            transition: opacity 0.4s ease;
+            transition: opacity 0.6s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         .desc-text {
@@ -563,7 +585,7 @@
             color: #e0e0f5; 
             line-height: 1.7;
             margin-bottom: 10px;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.6s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         /* Navigation controls - Glass style */
@@ -585,7 +607,7 @@
             cursor: pointer;
             font-weight: bold;
             font-size: clamp(11px, 2.5vw, 13px);
-            transition: all 0.3s ease;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
             text-transform: uppercase;
             letter-spacing: 1px;
             backdrop-filter: blur(5px);
@@ -595,7 +617,8 @@
             background: #00f2fe;
             color: #06060c;
             border-color: #00f2fe;
-            box-shadow: 0 0 15px #00f2fe;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.6);
+            transform: translateY(-2px);
         }
 
         .indicators-wrapper {
@@ -610,13 +633,13 @@
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         .indicator-dot.active {
             background: #00f2fe;
-            box-shadow: 0 0 10px #00f2fe;
-            width: 24px;
+            box-shadow: 0 0 15px #00f2fe;
+            width: 30px;
             border-radius: 6px;
         }
 
@@ -624,13 +647,13 @@
         .leaf-divider {
             position: relative;
             width: 100%;
-            height: 120px; /* Reduced container height for a tighter transition */
-            margin-top: -180px; /* Positioned to remain half-visible on the upper section */
-            margin-bottom: 60px; /* Aesthetic balance spacing */
+            height: 120px; 
+            margin-top: -180px; 
+            margin-bottom: 60px; 
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1500; /* Overlaps elements smoothly */
+            z-index: 1500; 
             overflow: visible;
             pointer-events: none;
             background: transparent;
@@ -648,17 +671,18 @@
         }
 
         .leaf-image {
-            width: clamp(280px, 40vw, 550px); /* Beautiful, large, impactful scale */
+            width: clamp(280px, 40vw, 550px); 
             height: auto;
             filter: drop-shadow(0 0 25px rgba(0, 242, 254, 0.55)) drop-shadow(0 15px 30px rgba(0, 0, 0, 0.7));
             will-change: transform;
-            transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1);
+            /* Added heavy CSS transition to instantly smooth any scroll events affecting it */
+            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
             transform-origin: center;
         }
 
         /* SECTION 4: High-Fidelity Responsive 3D Clean Fox Zone */
         .footer-spacer {
-            min-height: 100vh; /* Takes full screen height */
+            min-height: 100vh; 
             background: radial-gradient(circle at center, #09091a 0%, #030308 100%);
             display: flex;
             flex-direction: column;
@@ -686,7 +710,7 @@
         #fox-viewer {
             width: 100%;
             max-width: 1100px;
-            height: 70vh; /* Beautiful responsive rendering height */
+            height: 70vh; 
             margin: 0 auto;
             position: relative;
             border-radius: 24px;
@@ -694,13 +718,13 @@
             background: radial-gradient(circle, #090920 0%, #030308 100%);
             box-shadow: 0 0 40px rgba(0, 242, 254, 0.2), inset 0 0 30px rgba(0, 242, 254, 0.1);
             z-index: 12;
-            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease, border-color 0.5s ease;
+            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.8s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.8s ease;
         }
 
         #fox-viewer:hover {
             transform: scale(1.02);
             border-color: #00f2fe;
-            box-shadow: 0 0 50px rgba(0, 242, 254, 0.4), inset 0 0 40px rgba(0, 242, 254, 0.2);
+            box-shadow: 0 0 60px rgba(0, 242, 254, 0.5), inset 0 0 50px rgba(0, 242, 254, 0.3);
         }
 
         @keyframes spin {
@@ -747,7 +771,7 @@
                 margin-top: -120px;
             }
             #fox-viewer {
-                height: 55vh; /* Adjusted fox viewer height on mobile screens */
+                height: 55vh; 
             }
         }
     </style>
@@ -789,7 +813,7 @@
             interaction-prompt="none"
             touch-action="pan-y"
             loading="lazy"
-            style="opacity: 0; transition: opacity 0.5s ease;">
+            style="opacity: 0; transition: opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1);">
         </model-viewer>
     </div>
 
@@ -1070,7 +1094,7 @@
         let currentX = window.innerWidth / 2;
         let currentY = window.innerHeight / 2 - 60;
         
-        let lastScrollY = window.scrollY;
+        let lastScrollY = window.scrollY || 0;
         let scrollVelocity = 0;
 
         let currentSlideIndex = 0;
@@ -1200,7 +1224,7 @@
             }
         }
 
-        // Tracking Pointer Coordinates
+        // Tracking Pointer Coordinates and highly smooth interpolation
         function initCursorTracker() {
             const handleInstantSnap = (e) => {
                 const x = e.touches ? e.touches[0].clientX : e.clientX;
@@ -1233,8 +1257,9 @@
             const lerp = (start, end, amt) => (1 - amt) * start + amt * end;
 
             const animateFlightFollower = () => {
-                currentX = lerp(currentX, targetX, 0.24); 
-                currentY = lerp(currentY, targetY, 0.24);
+                // Modified interpolation fraction for extreme smoothness
+                currentX = lerp(currentX, targetX, 0.08); 
+                currentY = lerp(currentY, targetY, 0.08);
 
                 const dx = targetX - currentX;
                 const dy = targetY - currentY;
@@ -1269,6 +1294,7 @@
                         const progress = (viewHeight - rect.top) / (viewHeight + rect.height);
                         const rotation = -35 + progress * 70; // Smooth parallax rotation
                         const translateY = -30 + progress * 60; // Parallax drift
+                        // CSS transition strictly handles the smooth interpolation here now
                         leaf1.style.transform = `translateY(${translateY}px) rotate(${rotation}deg)`;
                     }
                 }
@@ -1295,35 +1321,40 @@
             }
         }
 
-        let scrollScheduled = false;
+        // High Performance Ultra Smooth Scroll State Manager
+        let targetScrollY = 0;
+        let smoothScrollY = 0;
 
         function initScrollListener() {
+            targetScrollY = window.scrollY || document.documentElement.scrollTop;
+            smoothScrollY = targetScrollY;
+
             window.addEventListener('scroll', () => {
-                if (!scrollScheduled) {
-                    scrollScheduled = true;
-                    requestAnimationFrame(updateScrollPhysics);
-                }
+                targetScrollY = window.scrollY || document.documentElement.scrollTop;
             }, { passive: true });
+
+            // Start highly optimized smoothing render loop
+            requestAnimationFrame(updateScrollPhysics);
         }
 
         function updateScrollPhysics() {
-            scrollScheduled = false;
+            // Apply a refined mathematical lerp factor for extreme butter smoothness
+            smoothScrollY += (targetScrollY - smoothScrollY) * 0.08;
 
-            const scrollTop = window.scrollY || document.documentElement.scrollTop;
             const docHeight = document.documentElement.scrollHeight - window.innerHeight;
             
-            const overallProgress = (scrollTop / docHeight) * 100;
+            const overallProgress = (smoothScrollY / docHeight) * 100;
             progressBar.style.width = `${overallProgress}%`;
 
-            const currentScrollY = window.scrollY;
-            scrollVelocity = currentScrollY - lastScrollY;
-            lastScrollY = currentScrollY;
-            targetY += scrollVelocity * 0.25;
+            const currentRealScrollY = targetScrollY;
+            scrollVelocity = currentRealScrollY - lastScrollY;
+            lastScrollY = currentRealScrollY;
+            targetY += scrollVelocity * 0.15; // Softened tilt responsiveness for the bee
 
-            // Section 1 (scroll-section-3, 192 frames, Manual Scroll)
+            // Section 1 (scroll-section-3, 192 frames, Smooth Scroll Interpolated)
             const s3Top = scrollSection3.offsetTop;
             const s3Height = scrollSection3.scrollHeight;
-            const s3Fraction = (scrollTop - s3Top) / (s3Height - window.innerHeight);
+            const s3Fraction = (smoothScrollY - s3Top) / (s3Height - window.innerHeight);
             const s3Bounded = Math.max(0, Math.min(1, s3Fraction));
             const frameIndex3 = Math.max(1, Math.min(totalFrames3, Math.ceil(s3Bounded * totalFrames3)));
 
@@ -1343,7 +1374,7 @@
             // Section 3 (scroll-section-1, Auto playing Cloudinary Video Overlay)
             const s1Top = scrollSection1.offsetTop;
             const s1Height = scrollSection1.scrollHeight;
-            const s1Fraction = (scrollTop - s1Top) / (s1Height - window.innerHeight);
+            const s1Fraction = (smoothScrollY - s1Top) / (s1Height - window.innerHeight);
             const s1Bounded = Math.max(0, Math.min(1, s1Fraction));
 
             updateOverlay(s1Bounded, overlay1, overlayTitle1, overlayDesc1);
@@ -1354,7 +1385,7 @@
                 statsColumn1.classList.remove("hide-stats");
             }
 
-            // Dynamic Smooth Flower Shrink & Fade transition based on Section 3 scroll
+            // High Fidelity Smooth Flower Shrink & Fade transition based on Section 3 smooth scroll
             const flower = document.getElementById("flower-container");
             if (flower) {
                 let scale = 0;
@@ -1362,18 +1393,20 @@
                 
                 if (s1Bounded > 0.05) {
                     if (s1Bounded <= 0.75) {
-                        scale = 1.3;
+                        scale = 1.4; // Exaggerated perfectly sized visual bloom scale
                         opacity = 1;
                     } else {
                         const shrinkFactor = (s1Bounded - 0.75) / 0.25; 
-                        scale = 1.3 * (1 - shrinkFactor);
+                        scale = 1.4 * (1 - shrinkFactor);
                         opacity = 1 - shrinkFactor;
                     }
                 } else {
+                    // Retain perfect origin 0 at absolute center coordinates
                     scale = 0;
                     opacity = 0;
                 }
                 
+                // Passed onto cinematic CSS Expo Out transform to emerge absolutely beautifully
                 flower.style.transform = `translate(-50%, -50%) scale(${scale})`;
                 flower.style.opacity = opacity;
                 if (opacity > 0.1) {
@@ -1388,7 +1421,7 @@
             // Smooth Bee Visibility Control logic
             const footerSpacer = document.querySelector('.footer-spacer');
             const footerTop = footerSpacer ? footerSpacer.offsetTop : document.documentElement.scrollHeight;
-            const isNearFooter = (scrollTop + window.innerHeight) >= (footerTop + 40);
+            const isNearFooter = (smoothScrollY + window.innerHeight) >= (footerTop + 40);
 
             if (s1Bounded > 0.05 && !isNearFooter) {
                 beeBox.style.opacity = "0";
@@ -1399,6 +1432,9 @@
                 beeBox.style.pointerEvents = "none";
                 beeGlow.style.opacity = "1";
             }
+
+            // Request next rendering frame recursively for continuous smoothing engine
+            requestAnimationFrame(updateScrollPhysics);
         }
 
         // Update Slider properties on second section
@@ -1421,7 +1457,7 @@
                 const slideTitle = document.getElementById("slide-title");
                 const slideDesc = document.getElementById("slide-desc");
 
-                clipartImg.style.transition = "transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease";
+                clipartImg.style.transition = "transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s ease";
                 if (slideDirection === "next") {
                     clipartImg.style.transform = "translateX(-150px) scale(0.95)";
                 } else {
@@ -1469,7 +1505,7 @@
 
                     clipartImg.offsetHeight;
 
-                    clipartImg.style.transition = "transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease";
+                    clipartImg.style.transition = "transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1)";
                     clipartImg.style.transform = "translateX(0) scale(1)";
                     clipartImg.style.opacity = "1";
                     
@@ -1523,7 +1559,7 @@
             alert("Right action button clicked!");
         }
 
-        // Initialization
+        // Initialization Pipeline execution
         loadAndExtractZip3(); 
         initScrollListener();
         initCursorTracker();
