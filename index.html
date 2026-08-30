@@ -191,10 +191,16 @@
             will-change: transform;
         }
 
-        /* Centered & Enlarged Flower Container in empty space below the video */
+        /* 3rd Section Visual Filters: Hide Overlay and Stats column as requested */
+        #scroll-text-overlay-1,
+        #scroll-section-1 .content-container {
+            display: none !important;
+        }
+
+        /* Centered & Enlarged Flower Container - Optimized for Auto Entrance and Auto Rotation */
         .flower-container {
             position: absolute;
-            top: 74%; /* Vertically centered in the empty section below the 55vh video */
+            top: 50%; /* Centered vertically inside the sticky viewport area */
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
             width: clamp(320px, 60vw, 650px); /* Enlarged to beautifully fit and fill the empty section */
@@ -203,9 +209,14 @@
             justify-content: center;
             align-items: center;
             z-index: 1100;
-            pointer-events: none;
+            pointer-events: auto; /* Active so that the button inside can be clicked */
             opacity: 0;
             will-change: transform, opacity;
+        }
+
+        /* State when Flower is automatically opened */
+        .flower-container.opened {
+            opacity: 1;
         }
 
         .flower-container img {
@@ -213,46 +224,56 @@
             height: 100%;
             object-fit: contain;
             filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.4)) drop-shadow(0 0 40px rgba(79, 172, 254, 0.2));
-            animation: flowerGlow 4s ease-in-out infinite;
             image-rendering: -webkit-optimize-contrast;
             backface-visibility: hidden;
         }
 
-        /* Transparent Button Styled for Center of Flower */
-        .why-choose-us-btn {
+        /* Continuous Automatic Rotation Animation when opened */
+        .flower-container.opened img#flower-img {
+            animation: flowerGlow 4s ease-in-out infinite, continuousRotateImg 15s linear infinite;
+        }
+
+        @keyframes continuousRotateImg {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Why Choose Us: Elegant Transparent Button inside the flower */
+        .choose-us-btn {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(4, 4, 10, 0.6);
-            border: 2px solid rgba(0, 242, 254, 0.8);
+            background: rgba(4, 4, 10, 0.4);
+            border: 2px solid rgba(0, 242, 254, 0.7);
             color: #00f2fe;
-            padding: 14px 32px;
+            padding: 14px 28px;
+            border-radius: 40px;
             font-size: clamp(13px, 3.5vw, 17px);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
-            border-radius: 30px;
             text-decoration: none;
-            cursor: pointer;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.4s ease;
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2), inset 0 0 10px rgba(0, 242, 254, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
+            transition: all 0.4s ease, opacity 0.8s ease;
             z-index: 1200;
+            pointer-events: auto;
+            opacity: 0;
             white-space: nowrap;
-            text-shadow: 0 0 8px rgba(0, 242, 254, 0.5);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
         }
 
-        .why-choose-us-btn:hover {
+        .choose-us-btn:hover {
             background: #00f2fe;
             color: #04040a;
+            box-shadow: 0 0 30px #00f2fe;
             border-color: #00f2fe;
-            box-shadow: 0 0 25px #00f2fe, 0 0 50px rgba(0, 242, 254, 0.5);
-            transform: translate(-50%, -50%) scale(1.05);
-            text-shadow: none;
+        }
+
+        /* Make button visible only when the flower is opened */
+        .flower-container.opened .choose-us-btn {
+            opacity: 1;
         }
 
         /* Dynamic pulsing flower glow */
@@ -266,21 +287,6 @@
             100% {
                 filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.4)) drop-shadow(0 0 30px rgba(79, 172, 254, 0.2));
             }
-        }
-
-        /* 3D Rocket specific layout and smooth transitions */
-        #rocket-viewer {
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            bottom: -200px;
-            left: 50%;
-            transform: translate(-50%, 50%) rotate(0deg);
-            z-index: 1200;
-            pointer-events: none;
-            --poster-color: transparent;
-            background-color: transparent;
-            transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), left 0.15s cubic-bezier(0.25, 1, 0.5, 1), bottom 0.15s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         /* Dynamic Scroll-Triggered Info Overlay */
@@ -367,7 +373,7 @@
             transform: translate(-50%, -50%); 
             left: 50%;
             top: 50%;
-            transition: transform 0.08s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 0.08s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease; /* Smooth fade support added */
         }
 
         /* Dynamic Neon Glow Light under the Bee */
@@ -382,7 +388,7 @@
             transform: translate(-50%, -50%);
             mix-blend-mode: screen;
             filter: blur(5px);
-            transition: left 0.12s cubic-bezier(0.25, 1, 0.5, 1), top 0.12s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: left 0.12s cubic-bezier(0.25, 1, 0.5, 1), top 0.12s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease; /* Smooth fade support added */
         }
 
         /* Flying Hover Cycle */
@@ -614,37 +620,53 @@
             border-radius: 6px;
         }
 
-        /* Loader specific style */
-        .loading-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            color: #00f2fe;
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(0, 242, 254, 0.1);
-            border-radius: 50%;
-            border-top-color: #00f2fe;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        /* Beautiful Dynamic Footer Spacer Section */
-        .footer-spacer {
-            min-height: 40vh;
-            background: linear-gradient(180deg, transparent, rgba(4, 4, 10, 0.95));
+        /* Advanced Custom Leaf Transition Dividers */
+        .leaf-divider {
+            position: relative;
+            width: 100%;
+            height: 380px; /* Generous area for the giant leaf transition */
             display: flex;
             justify-content: center;
             align-items: center;
-            border-top: 1px solid rgba(0, 242, 254, 0.1);
+            z-index: 100;
+            overflow: visible;
+            pointer-events: none;
+            background: transparent;
+        }
+
+        .leaf-divider::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 242, 254, 0.45), transparent);
+            top: 50%;
+            left: 0;
+            z-index: -1;
+        }
+
+        .leaf-image {
+            width: clamp(280px, 40vw, 550px); /* Beautiful, large, impactful scale as requested */
+            height: auto;
+            filter: drop-shadow(0 0 25px rgba(0, 242, 254, 0.55)) drop-shadow(0 15px 30px rgba(0, 0, 0, 0.7));
+            will-change: transform;
+            transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: center;
+        }
+
+        /* SECTION 4: High-Fidelity Responsive 3D Clean Fox Zone */
+        .footer-spacer {
+            min-height: 100vh; /* Takes full screen height */
+            background: radial-gradient(circle at center, #09091a 0%, #030308 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-top: 1px solid rgba(0, 242, 254, 0.15);
             position: relative;
             z-index: 10;
+            overflow: hidden;
+            padding: 40px 20px;
         }
 
         .footer-content {
@@ -655,6 +677,28 @@
             font-weight: 500;
             text-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
             text-align: center;
+            margin-top: 25px;
+            z-index: 15;
+        }
+
+        #fox-viewer {
+            width: 100%;
+            max-width: 1100px;
+            height: 70vh; /* Beautiful responsive rendering height */
+            margin: 0 auto;
+            position: relative;
+            border-radius: 24px;
+            border: 2px solid rgba(0, 242, 254, 0.25);
+            background: radial-gradient(circle, #090920 0%, #030308 100%);
+            box-shadow: 0 0 40px rgba(0, 242, 254, 0.2), inset 0 0 30px rgba(0, 242, 254, 0.1);
+            z-index: 12;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease, border-color 0.5s ease;
+        }
+
+        #fox-viewer:hover {
+            transform: scale(1.02);
+            border-color: #00f2fe;
+            box-shadow: 0 0 50px rgba(0, 242, 254, 0.4), inset 0 0 40px rgba(0, 242, 254, 0.2);
         }
 
         @keyframes spin {
@@ -668,10 +712,6 @@
                 right: 5%;
                 max-width: 90%;
                 top: 40%;
-            }
-            #rocket-viewer {
-                width: 110px; 
-                height: 110px;
             }
             .bee-box {
                 width: 110px;
@@ -698,7 +738,13 @@
             .flower-container {
                 width: clamp(240px, 70vw, 380px);
                 height: clamp(240px, 70vw, 380px);
-                top: 73%; /* Perfect alignment for mobile */
+                top: 50%; /* Center perfectly for mobile */
+            }
+            .leaf-divider {
+                height: 260px; /* Scaled down leaf divider area for compact screens */
+            }
+            #fox-viewer {
+                height: 55vh; /* Adjusted fox viewer height on mobile screens */
             }
         }
     </style>
@@ -729,7 +775,7 @@
             APPLYING BEE TEXTURES...
         </div>
 
-        <!-- Native Model Viewer -->
+        <!-- Native Model Viewer (Lazy loaded to protect WebGL contexts) -->
         <model-viewer 
             id="bee-viewer"
             alt="3D Bee Model" 
@@ -739,6 +785,7 @@
             shadow-intensity="1.5" 
             interaction-prompt="none"
             touch-action="pan-y"
+            loading="lazy"
             style="opacity: 0; transition: opacity 0.5s ease;">
         </model-viewer>
     </div>
@@ -759,16 +806,6 @@
     <div class="scroll-container" id="scroll-section-3">
         <div class="sticky-wrapper">
             
-            <!-- Floating 3D Rocket Model -->
-            <model-viewer 
-                id="rocket-viewer"
-                src="rocket.glb"
-                alt="3D Rocket Model" 
-                auto-rotate 
-                autoplay
-                interaction-prompt="none">
-            </model-viewer>
-
             <!-- Upper Portion: Image Sequence -->
             <div class="video-container">
                 <div id="loader-container-3" class="loading-box">
@@ -804,6 +841,13 @@
     </div>
 
     <!-- ========================================================================= -->
+    <!-- LEAF TRANSITION 1: Scroll-Responsive Leaf Divider between Section 1 and 2 -->
+    <!-- ========================================================================= -->
+    <div class="leaf-divider" id="leaf-divider-1">
+        <img src="https://i.ibb.co/wNhRgB26/1000636732-removebg-preview.png" alt="Floating Leaf Transition" class="leaf-image">
+    </div>
+
+    <!-- ========================================================================= -->
     <!-- SECTION 2: Dynamic Clipart Slider (Middle Section) -->
     <!-- ========================================================================= -->
     <div class="next-section" id="next-section">
@@ -833,7 +877,14 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- SECTION 3: Auto-playing Video Sequence (Using ezgif-69d75f05336c06b0-jpg.zip with 240 frames) -->
+    <!-- LEAF TRANSITION 2: Scroll-Responsive Leaf Divider between Section 2 and 3 -->
+    <!-- ========================================================================= -->
+    <div class="leaf-divider" id="leaf-divider-2">
+        <img src="https://i.ibb.co/wNhRgB26/1000636732-removebg-preview.png" alt="Floating Leaf Transition Inverse" class="leaf-image" style="transform: scaleX(-1);">
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 3: Auto-playing Video Sequence (Using ezgif-65ee0e2e5e9a989a-jpg.zip with 240 frames) -->
     <!-- ========================================================================= -->
     <div class="scroll-container" id="scroll-section-1">
         <div class="sticky-wrapper">
@@ -847,19 +898,20 @@
                 <img id="sequence-img-1" src="" alt="Sequence Frame 1">
             </div>
 
-            <!-- Beautiful Floating Flower Element (Zoom & Spin) with Transparent Button -->
+            <!-- Beautiful Floating Flower Element (Zoom & Auto Spin with Choose Us Link) -->
             <div id="flower-container" class="flower-container">
                 <img id="flower-img" src="https://i.ibb.co/DDpy6KwS/1000636620-removebg-preview.png" alt="Glowing Flower Element">
-                <a href="s.html" id="why-choose-us-btn" class="why-choose-us-btn">Why Choose Us</a>
+                <!-- Why Choose Us button added cleanly inside the flower container -->
+                <a href="s.html" class="choose-us-btn" id="choose-us-btn">Why Choose Us</a>
             </div>
 
-            <!-- Dynamic Info Card Overlay -->
+            <!-- Dynamic Info Card Overlay (Hided in CSS to keep section clean) -->
             <div class="scroll-text-overlay" id="scroll-text-overlay-1">
                 <div class="scroll-text-title" id="scroll-text-title-1">Loading...</div>
                 <div class="scroll-text-desc" id="scroll-text-desc-1">Initializing Database connection.</div>
             </div>
 
-            <!-- Lower Portion: Dashboard Grid -->
+            <!-- Lower Portion: Dashboard Grid (Hided in CSS to keep section clean) -->
             <div class="content-container">
                 <div class="dashboard-grid">
                     <div class="stats-column" id="stats-column-1">
@@ -878,8 +930,31 @@
         </div>
     </div>
 
-    <!-- Beautiful Final Spacer/Footer Section to allow smooth exit scroll -->
+    <!-- ========================================================================= -->
+    <!-- SECTION 4: High-Fidelity Responsive 3D Clean Fox Showcase Zone (Replacer) -->
+    <!-- ========================================================================= -->
     <div class="footer-spacer">
+        <div class="fox-title-wrapper" style="text-align: center; margin-bottom: 25px; z-index: 15;">
+            <h2 style="font-size: clamp(24px, 6vw, 48px); font-weight: 800; color: #00f2fe; text-transform: uppercase; letter-spacing: 3px; margin: 0; text-shadow: 0 0 20px rgba(0, 242, 254, 0.6);">Guardian Fox 3D</h2>
+            <p style="color: #72729a; font-size: clamp(12px, 3vw, 16px); letter-spacing: 1px; margin-top: 5px;">High performance native 3D file rendering</p>
+        </div>
+
+        <!-- Crisp Studio-Lit 3D Fox Viewer (Auto-rotate & Auto-play Enabled) -->
+        <model-viewer 
+            id="fox-viewer"
+            src="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Fox/glTF-Binary/Fox.glb"
+            alt="3D Animated Fox Model" 
+            auto-rotate 
+            autoplay
+            camera-controls
+            shadow-intensity="1.5"
+            exposure="1.2"
+            environment-image="neutral"
+            shadow-softness="0.6"
+            interaction-prompt="none"
+            loading="lazy">
+        </model-viewer>
+
         <div class="footer-content">
             <p>End of Cinematic Showcase • Designed for smooth transitions</p>
         </div>
@@ -965,9 +1040,9 @@
         const totalFrames3 = 192;
         const zipFileName3 = "frames_24fps_enhanced.zip";
 
-        // Sequence 1 Specifications (Section 3 - Auto Play)
+        // Sequence 1 Specifications (Section 3 - Auto Play with updated filename)
         const totalFrames1 = 240;
-        const zipFileName1 = "ezgif-69d75f05336c06b0-jpg.zip"; 
+        const zipFileName1 = "ezgif-65ee0e2e5e9a989a-jpg.zip"; 
 
         const imgElement3 = document.getElementById("sequence-img-3");
         const loaderContainer3 = document.getElementById("loader-container-3");
@@ -1157,7 +1232,7 @@
             requestAnimationFrame(animateSection1Video);
         }
 
-        // Direct loading of Bee.glb and raw textures
+        // Direct loading of Bee.glb and raw textures (Restored completely as requested)
         async function loadBeeDirect() {
             try {
                 beeViewer.src = "Bee.glb";
@@ -1262,6 +1337,37 @@
             animateFlightFollower();
         }
 
+        // Interactive Parallax Scroll Controller for Transition Leaves
+        function initLeafTransitions() {
+            const leaf1 = document.querySelector("#leaf-divider-1 .leaf-image");
+            const leaf2 = document.querySelector("#leaf-divider-2 .leaf-image");
+
+            window.addEventListener("scroll", () => {
+                const scrollTop = window.scrollY || document.documentElement.scrollTop;
+                const viewHeight = window.innerHeight;
+                
+                if (leaf1) {
+                    const rect = leaf1.getBoundingClientRect();
+                    if (rect.top < viewHeight && rect.bottom > 0) {
+                        const progress = (viewHeight - rect.top) / (viewHeight + rect.height);
+                        const rotation = -35 + progress * 70; // Highly smooth rotate
+                        const translateY = -40 + progress * 80; // Parallax drift
+                        leaf1.style.transform = `translateY(${translateY}px) rotate(${rotation}deg)`;
+                    }
+                }
+
+                if (leaf2) {
+                    const rect = leaf2.getBoundingClientRect();
+                    if (rect.top < viewHeight && rect.bottom > 0) {
+                        const progress = (viewHeight - rect.top) / (viewHeight + rect.height);
+                        const rotation = 40 - progress * 80; 
+                        const translateY = -50 + progress * 100;
+                        leaf2.style.transform = `scaleX(-1) translateY(${translateY}px) rotate(${rotation}deg)`;
+                    }
+                }
+            }, { passive: true });
+        }
+
         // Overlay controller based on scroll bounded fractions
         function updateOverlay(boundedFraction, overlay, title, desc) {
             let activeTextFound = false;
@@ -1327,54 +1433,13 @@
                 statsColumn3.classList.remove("hide-stats");
             }
 
-            // Rocket controller logic
-            const rocket = document.getElementById("rocket-viewer");
-            if (rocket) {
-                let xPercent = 50;
-                let yPixels = -200;
-                let rotateDeg = 0;
-
-                if (s3Bounded <= 0.50) {
-                    const p1 = s3Bounded / 0.50;
-                    yPixels = -200 + p1 * (window.innerHeight * 0.5 + 200);
-                    xPercent = 50;
-                    rotateDeg = 0;
-                } else if (s3Bounded <= 0.65) {
-                    const pRot = (s3Bounded - 0.50) / 0.15;
-                    yPixels = window.innerHeight * 0.5;
-                    xPercent = 50;
-                    rotateDeg = pRot * 90;
-                } else {
-                    const p2 = (s3Bounded - 0.65) / 0.35;
-                    yPixels = window.innerHeight * 0.5;
-                    xPercent = 50 + p2 * 75; 
-                    rotateDeg = 90;
-                }
-
-                rocket.style.bottom = `${yPixels}px`;
-                rocket.style.left = `${xPercent}%`;
-                rocket.style.transform = `translate(-50%, 50%) rotate(${rotateDeg}deg)`;
-            }
-
             // Section 3 (scroll-section-1, Auto playing video, scroll-dependent overlay)
             const s1Top = scrollSection1.offsetTop;
             const s1Height = scrollSection1.scrollHeight;
             const s1Fraction = (scrollTop - s1Top) / (s1Height - window.innerHeight);
             const s1Bounded = Math.max(0, Math.min(1, s1Fraction));
 
-            // Determine if we are reaching the final flower open state
-            const isFinalFlowerState = (s1Bounded >= 0.70);
-
-            if (isFinalFlowerState) {
-                // Fully hide section text when the flower is fully open
-                overlay1.classList.remove("active");
-                overlay1.style.opacity = "0";
-                overlay1.style.pointerEvents = "none";
-            } else {
-                // Normal text overlay behavior before the final state
-                updateOverlay(s1Bounded, overlay1, overlayTitle1, overlayDesc1);
-                overlay1.style.pointerEvents = "auto";
-            }
+            updateOverlay(s1Bounded, overlay1, overlayTitle1, overlayDesc1);
 
             if (s1Bounded > 0.05) {
                 statsColumn1.classList.add("hide-stats");
@@ -1382,50 +1447,50 @@
                 statsColumn1.classList.remove("hide-stats");
             }
 
-            // Real-time Flower animation logic based on Section 3 scroll
+            // Dynamic Smooth Flower Shrink & Fade transition based on Section 3 scroll
             const flower = document.getElementById("flower-container");
-            const whyChooseBtn = document.getElementById("why-choose-us-btn");
-
             if (flower) {
                 let scale = 0;
                 let opacity = 0;
-                let rotation = 0;
-
-                // Scroll Timeline Mapping:
-                if (s1Bounded < 0.70) {
-                    const progress = s1Bounded / 0.70; // Normalized (0 to 1)
-                    scale = progress * 1.45; // Grows smoothly to a beautiful size
-                    opacity = Math.min(1, progress * 1.8); // Fades in cleanly
-                    rotation = s1Bounded * 1080; // Spins on entry
-                    
-                    if (whyChooseBtn) {
-                        whyChooseBtn.style.opacity = "0";
-                        whyChooseBtn.style.pointerEvents = "none";
+                
+                if (s1Bounded > 0.05) {
+                    if (s1Bounded <= 0.75) {
+                        scale = 1.3;
+                        opacity = 1;
+                    } else {
+                        const shrinkFactor = (s1Bounded - 0.75) / 0.25; 
+                        scale = 1.3 * (1 - shrinkFactor);
+                        opacity = 1 - shrinkFactor;
                     }
-                    flower.style.pointerEvents = "none";
-                } 
-                // Final state (0.70 to 1.0): Flower remains fully open, text hides, button appears
-                else {
-                    scale = 1.45; 
-                    opacity = 1;
-                    // Slow majestic ongoing rotation while staying large
-                    rotation = (0.70 * 1080) + (s1Bounded - 0.70) * 150; 
-                    
-                    if (whyChooseBtn) {
-                        whyChooseBtn.style.opacity = "1";
-                        whyChooseBtn.style.pointerEvents = "auto";
-                    }
-                    flower.style.pointerEvents = "auto";
+                } else {
+                    scale = 0;
+                    opacity = 0;
                 }
-
-                // Apply scales to container and spin dynamically to image layer only
+                
                 flower.style.transform = `translate(-50%, -50%) scale(${scale})`;
                 flower.style.opacity = opacity;
-                
-                const flowerImg = document.getElementById("flower-img");
-                if (flowerImg) {
-                    flowerImg.style.transform = `rotate(${rotation}deg)`;
+                if (opacity > 0.1) {
+                    flower.style.pointerEvents = "auto";
+                    flower.classList.add("opened"); 
+                } else {
+                    flower.style.pointerEvents = "none";
+                    flower.classList.remove("opened");
                 }
+            }
+
+            // Smooth Bee Visibility Control logic
+            const footerSpacer = document.querySelector('.footer-spacer');
+            const footerTop = footerSpacer ? footerSpacer.offsetTop : document.documentElement.scrollHeight;
+            const isNearFooter = (scrollTop + window.innerHeight) >= (footerTop + 40);
+
+            if (s1Bounded > 0.05 && !isNearFooter) {
+                beeBox.style.opacity = "0";
+                beeBox.style.pointerEvents = "none";
+                beeGlow.style.opacity = "0";
+            } else {
+                beeBox.style.opacity = "1";
+                beeBox.style.pointerEvents = "none";
+                beeGlow.style.opacity = "1";
             }
         }
 
@@ -1556,6 +1621,7 @@
         loadAndExtractZip1(); 
         initScrollListener();
         initCursorTracker();
+        initLeafTransitions(); // Loaded Parallax Transition Engine
         loadBeeDirect(); 
     </script>
 </body>
