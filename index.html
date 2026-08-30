@@ -620,15 +620,17 @@
             border-radius: 6px;
         }
 
-        /* Advanced Custom Leaf Transition Dividers */
+        /* Advanced Custom Leaf Transition Divider */
         .leaf-divider {
             position: relative;
             width: 100%;
-            height: 380px; /* Generous area for the giant leaf transition */
+            height: 120px; /* Reduced container height for a tighter transition */
+            margin-top: -180px; /* Positioned to remain half-visible on the upper section */
+            margin-bottom: 60px; /* Aesthetic balance spacing */
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 100;
+            z-index: 1500; /* Overlaps elements smoothly */
             overflow: visible;
             pointer-events: none;
             background: transparent;
@@ -646,7 +648,7 @@
         }
 
         .leaf-image {
-            width: clamp(280px, 40vw, 550px); /* Beautiful, large, impactful scale as requested */
+            width: clamp(280px, 40vw, 550px); /* Beautiful, large, impactful scale */
             height: auto;
             filter: drop-shadow(0 0 25px rgba(0, 242, 254, 0.55)) drop-shadow(0 15px 30px rgba(0, 0, 0, 0.7));
             will-change: transform;
@@ -741,7 +743,8 @@
                 top: 50%; /* Center perfectly for mobile */
             }
             .leaf-divider {
-                height: 260px; /* Scaled down leaf divider area for compact screens */
+                height: 80px; 
+                margin-top: -120px;
             }
             #fox-viewer {
                 height: 55vh; /* Adjusted fox viewer height on mobile screens */
@@ -877,25 +880,21 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- LEAF TRANSITION 2: Scroll-Responsive Leaf Divider between Section 2 and 3 -->
-    <!-- ========================================================================= -->
-    <div class="leaf-divider" id="leaf-divider-2">
-        <img src="https://i.ibb.co/wNhRgB26/1000636732-removebg-preview.png" alt="Floating Leaf Transition Inverse" class="leaf-image" style="transform: scaleX(-1);">
-    </div>
-
-    <!-- ========================================================================= -->
-    <!-- SECTION 3: Auto-playing Video Sequence (Using ezgif-65ee0e2e5e9a989a-jpg.zip with 240 frames) -->
+    <!-- SECTION 3: Auto-playing Video Sequence (Cloudinary Video Embed - Instant Load) -->
     <!-- ========================================================================= -->
     <div class="scroll-container" id="scroll-section-1">
         <div class="sticky-wrapper">
             
-            <!-- Upper Portion: Image Sequence -->
+            <!-- Upper Portion: Cloudinary Loop Video -->
             <div class="video-container">
-                <div id="loader-container-1" class="loading-box">
-                    <div class="spinner"></div>
-                    <div class="loader-text">BUFFERING SEQUENCER 3 <span id="progress-1">0%</span></div>
-                </div>
-                <img id="sequence-img-1" src="" alt="Sequence Frame 1">
+                <iframe
+                  id="section-3-video"
+                  src="https://player.cloudinary.com/embed/?cloud_name=qv3ejner&public_id=Create_First_Click_intro_video_202608302035&player[autoplay]=true&player[loop]=true&player[muted]=true&player[controls]=false"
+                  style="width: 100%; height: 100%; border: none;"
+                  allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                  allowfullscreen
+                  frameborder="0">
+                </iframe>
             </div>
 
             <!-- Beautiful Floating Flower Element (Zoom & Auto Spin with Choose Us Link) -->
@@ -916,7 +915,7 @@
                 <div class="dashboard-grid">
                     <div class="stats-column" id="stats-column-1">
                         <div class="stat-card">
-                            <div class="stat-val" id="frame-counter-1">- / 240</div>
+                            <div class="stat-val" id="frame-counter-1">- / -</div>
                             <div class="stat-label">Video Frame</div>
                         </div>
                         <div class="stat-card">
@@ -1040,10 +1039,6 @@
         const totalFrames3 = 192;
         const zipFileName3 = "frames_24fps_enhanced.zip";
 
-        // Sequence 1 Specifications (Section 3 - Auto Play with updated filename)
-        const totalFrames1 = 240;
-        const zipFileName1 = "ezgif-65ee0e2e5e9a989a-jpg.zip"; 
-
         const imgElement3 = document.getElementById("sequence-img-3");
         const loaderContainer3 = document.getElementById("loader-container-3");
         const progressText3 = document.getElementById("progress-3");
@@ -1055,12 +1050,7 @@
         const overlayTitle3 = document.getElementById("scroll-text-title-3");
         const overlayDesc3 = document.getElementById("scroll-text-desc-3");
 
-        const imgElement1 = document.getElementById("sequence-img-1");
-        const loaderContainer1 = document.getElementById("loader-container-1");
-        const progressText1 = document.getElementById("progress-1");
         const scrollSection1 = document.getElementById("scroll-section-1");
-        const frameCounter1 = document.getElementById("frame-counter-1");
-        const percentCounter1 = document.getElementById("percent-counter-1");
         const statsColumn1 = document.getElementById("stats-column-1");
         const overlay1 = document.getElementById("scroll-text-overlay-1");
         const overlayTitle1 = document.getElementById("scroll-text-title-1");
@@ -1072,15 +1062,7 @@
         const beeViewer = document.getElementById("bee-viewer");
         const beeLoader = document.getElementById("bee-loader");
 
-        const frameURLs1 = [];
         const frameURLs3 = [];
-
-        // Auto play tracking for Section 3 Sequence
-        let isSec1Loaded = false;
-        let sec1CurrentFrame = 1;
-        let sec1LastFrameTime = 0;
-        const sec1TargetFPS = 24; 
-        const sec1FrameInterval = 1000 / sec1TargetFPS;
 
         // Smooth Cursor Follower Physics
         let targetX = window.innerWidth / 2;
@@ -1099,10 +1081,22 @@
             return `frames_24fps_enhanced/frame_${paddedIndex}.jpg`;
         };
 
-        const getSec1FrameName = (index) => {
-            const paddedIndex = String(index).padStart(3, '0');
-            return `ezgif-frame-${paddedIndex}.jpg`;
-        };
+        // Fallback loader config
+        function setupModelViewerWithFallback(viewerId, localSrc, fallbackSrc) {
+            const viewer = document.getElementById(viewerId);
+            if (!viewer) return;
+
+            viewer.src = localSrc;
+            let fallbackAttempted = false;
+
+            viewer.addEventListener('error', (event) => {
+                console.warn(`[3D Warning] Loaded failed for ${viewerId} (${localSrc}). Trying fallback...`);
+                if (!fallbackAttempted && fallbackSrc) {
+                    fallbackAttempted = true;
+                    viewer.src = fallbackSrc;
+                }
+            });
+        }
 
         // Extract ZIP for Section 1 (Top Section - Manual Scroll)
         async function loadAndExtractZip3() {
@@ -1156,83 +1150,7 @@
             }
         }
 
-        // Extract ZIP for Section 3 (Bottom Section - Auto Play)
-        async function loadAndExtractZip1() {
-            try {
-                const response = await fetch(zipFileName1);
-                if (!response.ok) {
-                    throw new Error(`${zipFileName1} not found.`);
-                }
-                
-                const arrayBuffer = await response.arrayBuffer();
-                const zip = await JSZip.loadAsync(arrayBuffer);
-
-                for (let i = 1; i <= totalFrames1; i++) {
-                    const fileName = getSec1FrameName(i);
-                    let file = zip.file(fileName);
-                    
-                    if (!file) {
-                        const targetShortName = `ezgif-frame-${String(i).padStart(3, '0')}.jpg`;
-                        const match = Object.keys(zip.files).find(key => key.endsWith(targetShortName));
-                        if (match) {
-                            file = zip.file(match);
-                        }
-                    }
-                    
-                    if (file) {
-                        const blob = await file.async("blob");
-                        const objectURL = URL.createObjectURL(blob);
-                        frameURLs1[i] = objectURL;
-
-                        const imgObj = new Image();
-                        imgObj.src = objectURL;
-                        if (imgObj.decode) {
-                            imgObj.decode().catch(() => {});
-                        }
-                    }
-
-                    const percent = Math.round((i / totalFrames1) * 100);
-                    progressText1.innerText = `${percent}%`;
-                }
-
-                if (frameURLs1[1]) {
-                    imgElement1.src = frameURLs1[1];
-                    imgElement1.style.display = "block";
-                    loaderContainer1.style.display = "none";
-                    
-                    isSec1Loaded = true;
-                    // Auto Play Loop starting point
-                    requestAnimationFrame(animateSection1Video);
-                }
-
-            } catch (error) {
-                console.error("Section 1 extraction error:", error);
-                loaderContainer1.innerHTML = `<span style="color: #ff4757; font-weight: bold;">Failed: ${error.message}</span>`;
-            }
-        }
-
-        // Auto-play Animation loop for Section 3
-        function animateSection1Video(timestamp) {
-            if (!isSec1Loaded) return;
-            if (!sec1LastFrameTime) sec1LastFrameTime = timestamp;
-
-            const elapsed = timestamp - sec1LastFrameTime;
-
-            if (elapsed >= sec1FrameInterval) {
-                sec1CurrentFrame = (sec1CurrentFrame % totalFrames1) + 1;
-                
-                if (frameURLs1[sec1CurrentFrame]) {
-                    imgElement1.src = frameURLs1[sec1CurrentFrame];
-                    frameCounter1.innerText = `${sec1CurrentFrame} / ${totalFrames1}`;
-                    percentCounter1.innerText = `${Math.round((sec1CurrentFrame / totalFrames1) * 100)}%`;
-                }
-                
-                sec1LastFrameTime = timestamp - (elapsed % sec1FrameInterval);
-            }
-            requestAnimationFrame(animateSection1Video);
-        }
-
-        // Direct loading of Bee.glb and raw textures (Restored completely as requested)
+        // Direct loading of Bee.glb and raw textures (Restored completely)
         async function loadBeeDirect() {
             try {
                 beeViewer.src = "Bee.glb";
@@ -1337,10 +1255,9 @@
             animateFlightFollower();
         }
 
-        // Interactive Parallax Scroll Controller for Transition Leaves
+        // Interactive Parallax Scroll Controller for Transition Leaf
         function initLeafTransitions() {
             const leaf1 = document.querySelector("#leaf-divider-1 .leaf-image");
-            const leaf2 = document.querySelector("#leaf-divider-2 .leaf-image");
 
             window.addEventListener("scroll", () => {
                 const scrollTop = window.scrollY || document.documentElement.scrollTop;
@@ -1350,19 +1267,9 @@
                     const rect = leaf1.getBoundingClientRect();
                     if (rect.top < viewHeight && rect.bottom > 0) {
                         const progress = (viewHeight - rect.top) / (viewHeight + rect.height);
-                        const rotation = -35 + progress * 70; // Highly smooth rotate
-                        const translateY = -40 + progress * 80; // Parallax drift
+                        const rotation = -35 + progress * 70; // Smooth parallax rotation
+                        const translateY = -30 + progress * 60; // Parallax drift
                         leaf1.style.transform = `translateY(${translateY}px) rotate(${rotation}deg)`;
-                    }
-                }
-
-                if (leaf2) {
-                    const rect = leaf2.getBoundingClientRect();
-                    if (rect.top < viewHeight && rect.bottom > 0) {
-                        const progress = (viewHeight - rect.top) / (viewHeight + rect.height);
-                        const rotation = 40 - progress * 80; 
-                        const translateY = -50 + progress * 100;
-                        leaf2.style.transform = `scaleX(-1) translateY(${translateY}px) rotate(${rotation}deg)`;
                     }
                 }
             }, { passive: true });
@@ -1433,7 +1340,7 @@
                 statsColumn3.classList.remove("hide-stats");
             }
 
-            // Section 3 (scroll-section-1, Auto playing video, scroll-dependent overlay)
+            // Section 3 (scroll-section-1, Auto playing Cloudinary Video Overlay)
             const s1Top = scrollSection1.offsetTop;
             const s1Height = scrollSection1.scrollHeight;
             const s1Fraction = (scrollTop - s1Top) / (s1Height - window.innerHeight);
@@ -1618,10 +1525,9 @@
 
         // Initialization
         loadAndExtractZip3(); 
-        loadAndExtractZip1(); 
         initScrollListener();
         initCursorTracker();
-        initLeafTransitions(); // Loaded Parallax Transition Engine
+        initLeafTransitions(); 
         loadBeeDirect(); 
     </script>
 </body>
