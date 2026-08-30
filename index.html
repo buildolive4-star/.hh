@@ -15,13 +15,15 @@
             box-sizing: border-box;
         }
         
-        body {
+        html, body {
             margin: 0;
             padding: 0;
             background-color: #04040a;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: #ffffff;
-            overflow-x: hidden;
+            overflow-x: hidden !important; /* Strict protection to prevent side-shifting on swipe */
+            width: 100%;
+            position: relative;
         }
 
         /* Fullscreen Video Background */
@@ -135,6 +137,7 @@
         #scroll-section-1 {
             margin-top: 0px; 
             height: 520vh; /* Smoothly lengthened for better flower transition track */
+            margin-bottom: 0px; /* Forced touching section 4 */
         }
 
         /* Sticky Wrapper with Mobile Optimization */
@@ -197,14 +200,14 @@
             display: none !important;
         }
 
-        /* Centered & Enlarged Flower Container - Optimized for Auto Entrance and Auto Rotation */
+        /* Centered & Enlarged Flower Container - Shifted down to prevent video blocking */
         .flower-container {
             position: absolute;
-            top: 50%; /* Centered vertically inside the sticky viewport area */
+            top: 62%; /* Shifted downwards from 50% to prevent video overlapping */
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
-            width: clamp(320px, 60vw, 650px); /* Enlarged to beautifully fit and fill the empty section */
-            height: clamp(320px, 60vw, 650px); /* Enlarged to match */
+            width: clamp(320px, 60vw, 650px); 
+            height: clamp(320px, 60vw, 650px); 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -463,6 +466,7 @@
             padding: 80px 20px;
             border-top: 1px solid rgba(0, 242, 254, 0.15);
             z-index: 10;
+            margin-bottom: 0px; /* Absolutely touch section 3 with 0px gap */
         }
 
         .next-section::before {
@@ -566,60 +570,6 @@
             transition: opacity 0.4s ease;
         }
 
-        /* Navigation controls - Glass style */
-        .slider-controls {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            margin-top: 25px;
-            max-width: 950px; 
-        }
-
-        .slide-btn {
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #ffffff;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: clamp(11px, 2.5vw, 13px);
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            backdrop-filter: blur(5px);
-        }
-
-        .slide-btn:hover {
-            background: #00f2fe;
-            color: #06060c;
-            border-color: #00f2fe;
-            box-shadow: 0 0 15px #00f2fe;
-        }
-
-        .indicators-wrapper {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .indicator-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .indicator-dot.active {
-            background: #00f2fe;
-            box-shadow: 0 0 10px #00f2fe;
-            width: 24px;
-            border-radius: 6px;
-        }
-
         /* Advanced Custom Leaf Transition Divider */
         .leaf-divider {
             position: relative;
@@ -656,6 +606,31 @@
             transform-origin: center;
         }
 
+        /* ========================================================================= */
+        /* STICKER TRANSITION ZONE: Sits exactly half on Section 3 and half on Section 4 */
+        /* ========================================================================= --> */
+        .sticker-divider-container {
+            position: relative;
+            width: 100%;
+            height: 0; /* Pure zero-height structure to ensure section 3 and 4 touch seamlessly */
+            z-index: 2500; /* Heavy priority to fly on top of transitions */
+            overflow: visible;
+            pointer-events: none;
+            background: transparent;
+        }
+
+        #scroll-sticker-3-4 {
+            position: absolute;
+            top: 0; /* Center line exactly between section 3 and section 4 */
+            left: -450px; /* Out of view left to start */
+            transform: translateY(-50%) rotate(0deg); /* Half on upper section, half on lower section (No rotate animation) */
+            width: clamp(240px, 28vw, 450px); /* Large, high-resolution aesthetic card sticker */
+            height: auto;
+            filter: drop-shadow(0 0 35px rgba(0, 242, 254, 0.65)) drop-shadow(0 15px 25px rgba(0,0,0,0.7));
+            will-change: transform, left;
+            transition: transform 0.04s ease-out, left 0.04s ease-out; /* Highly responsive tracking physics */
+        }
+
         /* SECTION 4: High-Fidelity Responsive 3D Clean Fox Zone */
         .footer-spacer {
             min-height: 100vh; /* Takes full screen height */
@@ -664,11 +639,12 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border-top: 1px solid rgba(0, 242, 254, 0.15);
+            border-top: none; /* Removed border line to touch section 3 completely */
             position: relative;
             z-index: 10;
             overflow: hidden;
             padding: 40px 20px;
+            margin-top: 0px; /* Forced touching with section 3 */
         }
 
         .footer-content {
@@ -740,7 +716,7 @@
             .flower-container {
                 width: clamp(240px, 70vw, 380px);
                 height: clamp(240px, 70vw, 380px);
-                top: 50%; /* Center perfectly for mobile */
+                top: 62%; /* Shifted downwards to prevent overlaps on mobile */
             }
             .leaf-divider {
                 height: 80px; 
@@ -748,6 +724,9 @@
             }
             #fox-viewer {
                 height: 55vh; /* Adjusted fox viewer height on mobile screens */
+            }
+            #scroll-sticker-3-4 {
+                width: clamp(160px, 35vw, 280px); /* Responsive sizing for mobile transition sticker */
             }
         }
     </style>
@@ -927,6 +906,13 @@
             </div>
 
         </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- STICKER TRANSITION: Sits exactly half on Section 3 and half on Section 4 -->
+    <!-- ========================================================================= -->
+    <div class="sticker-divider-container">
+        <img id="scroll-sticker-3-4" src="https://i.ibb.co/FjpxmDH/1000636743-removebg-preview.png" alt="Interactive Parallax Flying Sticker">
     </div>
 
     <!-- ========================================================================= -->
@@ -1354,20 +1340,27 @@
                 statsColumn1.classList.remove("hide-stats");
             }
 
-            // Dynamic Smooth Flower Shrink & Fade transition based on Section 3 scroll
+            // =========================================================================
+            // DYNAMIC FLOWER TRANSITION: Shorter screen lifespan & optimized exits
+            // =========================================================================
             const flower = document.getElementById("flower-container");
             if (flower) {
                 let scale = 0;
                 let opacity = 0;
                 
-                if (s1Bounded > 0.05) {
-                    if (s1Bounded <= 0.75) {
+                // Enters fast at 0.05, stays active, exit starts early at 0.40 & gone completely by 0.60
+                if (s1Bounded > 0.05 && s1Bounded < 0.60) {
+                    if (s1Bounded <= 0.25) {
+                        const enterFactor = (s1Bounded - 0.05) / 0.20;
+                        scale = 1.3 * enterFactor;
+                        opacity = enterFactor;
+                    } else if (s1Bounded <= 0.40) {
                         scale = 1.3;
                         opacity = 1;
                     } else {
-                        const shrinkFactor = (s1Bounded - 0.75) / 0.25; 
-                        scale = 1.3 * (1 - shrinkFactor);
-                        opacity = 1 - shrinkFactor;
+                        const exitFactor = (s1Bounded - 0.40) / 0.20;
+                        scale = 1.3 * (1 - exitFactor);
+                        opacity = 1 - exitFactor;
                     }
                 } else {
                     scale = 0;
@@ -1398,6 +1391,33 @@
                 beeBox.style.opacity = "1";
                 beeBox.style.pointerEvents = "none";
                 beeGlow.style.opacity = "1";
+            }
+
+            // =========================================================================
+            // STICKER PARALLAX ACTION: Translates Left-to-Right Based on Scroll Entry (No Rotation)
+            // =========================================================================
+            const sticker = document.getElementById("scroll-sticker-3-4");
+            if (sticker) {
+                const triggerStart = s1Top + s1Height - window.innerHeight * 1.5;
+                const triggerEnd = s1Top + s1Height;
+
+                if (scrollTop > triggerStart) {
+                    const totalDist = triggerEnd - triggerStart;
+                    const scrolledDist = scrollTop - triggerStart;
+                    const progress = Math.max(0, Math.min(1, scrolledDist / totalDist));
+
+                    // Translates from -400px (Offscreen Left) to window.innerWidth + 400px (Offscreen Right)
+                    const startLeft = -400;
+                    const endLeft = window.innerWidth + 400;
+                    const currentLeft = startLeft + progress * (endLeft - startLeft);
+
+                    sticker.style.left = `${currentLeft}px`;
+                    // REMOVED ROTATION - keeps sticker perfectly stable and upright so important info is fully readable
+                    sticker.style.transform = `translateY(-50%) rotate(0deg)`;
+                } else {
+                    sticker.style.left = `-400px`;
+                    sticker.style.transform = `translateY(-50%) rotate(0deg)`;
+                }
             }
         }
 
