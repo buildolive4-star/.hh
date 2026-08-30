@@ -189,6 +189,22 @@
             will-change: transform;
         }
 
+        /* 3D Rocket specific layout and butter-smooth scrolling transitions */
+        #rocket-viewer {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            bottom: -200px;
+            left: 50%;
+            transform: translate(-50%, 50%) rotate(0deg);
+            z-index: 1200;
+            pointer-events: none;
+            --poster-color: transparent;
+            background-color: transparent;
+            /* Silky smooth kinetic tracking */
+            transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), left 0.15s cubic-bezier(0.25, 1, 0.5, 1), bottom 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
         /* Dynamic Scroll-Triggered Info Overlay - RAW NO BOX FORMAT */
         .scroll-text-overlay {
             position: absolute;
@@ -255,6 +271,10 @@
             .scroll-text-desc {
                 font-size: 15px;
             }
+            #rocket-viewer {
+                width: 130px;
+                height: 130px;
+            }
         }
 
         /* Lower Portion (Dashboard) */
@@ -318,7 +338,7 @@
 
         /* Flying Hover Cycle */
         @keyframes flyHover {
-            0 {
+            0% {
                 transform: translateY(0px) rotate(0deg);
             }
             25% {
@@ -661,6 +681,16 @@
     <div class="scroll-container" id="scroll-section-3">
         <div class="sticky-wrapper">
             
+            <!-- Floating 3D Rocket Model (Controlled beautifully via Section 1 scrolling) -->
+            <model-viewer 
+                id="rocket-viewer"
+                src="rocket.glb"
+                alt="3D Rocket Model" 
+                auto-rotate 
+                autoplay
+                interaction-prompt="none">
+            </model-viewer>
+
             <!-- Upper Portion: Image Sequence -->
             <div class="video-container">
                 <div id="loader-container-3" class="loading-box">
@@ -726,7 +756,7 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- SECTION 3: Swapped to New Scroll Sequence (Using ezgif-65ee0e2e5e9a989a-jpg.zip with 240 frames) [1] -->
+    <!-- SECTION 3: Swapped to New Scroll Sequence (Using ezgif-69d75f05336c06b0-jpg.zip with 240 frames) [1] -->
     <!-- ========================================================================= -->
     <div class="scroll-container" id="scroll-section-1">
         <div class="sticky-wrapper">
@@ -854,12 +884,10 @@
         const totalFrames3 = 192;
         const zipFileName3 = "frames_24fps_enhanced.zip";
 
-        // Sequence 1 Specifications (ezgif-65ee0e2e5e9a989a-jpg.zip - 240 frames, Swapped to Section 3) [1]
+        // Sequence 1 Specifications (ezgif-69d75f05336c06b0-jpg.zip - 240 frames, Swapped to Section 3) [1]
         const totalFrames1 = 240;
-        const zipFileName1 = "ezgif-65ee0e2e5e9a989a-jpg.zip";
-        
-        const beeZipName = "bee.zip"; 
-        
+        const zipFileName1 = "ezgif-69d75f05336c06b0-jpg.zip"; // Updated to newest ZIP file from Repository [1]
+
         // Section 1 DOM Elements (Now mapped to scroll-section-3, 192 frames)
         const imgElement3 = document.getElementById("sequence-img-3");
         const loaderContainer3 = document.getElementById("loader-container-3");
@@ -969,7 +997,7 @@
             try {
                 const response = await fetch(zipFileName1);
                 if (!response.ok) {
-                    throw new Error("ezgif-65ee0e2e5e9a989a-jpg.zip not found.");
+                    throw new Error(`${zipFileName1} not found.`);
                 }
                 
                 const arrayBuffer = await response.arrayBuffer();
@@ -1011,66 +1039,20 @@
             }
         }
 
-        // Extract textures + original GLB, then bind textures via Javascript Material API
-        async function loadBeeFromZip() {
+        // Direct loading of Bee.glb and raw textures from repository folder
+        async function loadBeeDirect() {
             try {
-                const response = await fetch(beeZipName);
-                if (!response.ok) {
-                    throw new Error("bee.zip file not found. Place it in the same directory.");
-                }
-                
-                const arrayBuffer = await response.arrayBuffer();
-                const zip = await JSZip.loadAsync(arrayBuffer);
+                // Set raw GLB source as Object URL directly
+                beeViewer.src = "Bee.glb";
 
-                const textureUrlsMap = {};
-                let glbFileEntry = null;
-
-                // URL/URI Decoder function to safely match strings
-                const safeNormalize = (str) => {
-                    try {
-                        return decodeURIComponent(str).toLowerCase().trim();
-                    } catch (e) {
-                        return str.toLowerCase().trim();
-                    }
-                };
-
-                // Step 1: Extract all texture images & find .glb file
-                for (const [relativePath, file] of Object.entries(zip.files)) {
-                    if (file.dir) continue;
-
-                    const rawFileName = relativePath.split('/').pop();
-                    const normalizedName = safeNormalize(rawFileName);
-
-                    // Extract image textures
-                    if (normalizedName.endsWith(".png") || normalizedName.endsWith(".jpg") || normalizedName.endsWith(".jpeg")) {
-                        const blob = await file.async("blob");
-                        const blobURL = URL.createObjectURL(blob);
-                        textureUrlsMap[normalizedName] = blobURL;
-                    }
-
-                    // Extract raw GLB model
-                    if (normalizedName.endsWith(".glb")) {
-                        glbFileEntry = file;
-                    }
-                }
-
-                if (!glbFileEntry) {
-                    throw new Error("No .glb file found inside bee.zip");
-                }
-
-                // Step 2: Set raw GLB source as Object URL directly
-                const rawGlbBlob = await glbFileEntry.async("blob");
-                const rawGlbURL = URL.createObjectURL(rawGlbBlob);
-                beeViewer.src = rawGlbURL;
-
-                // Step 3: Trigger dynamic texture injection once GLB scene geometry is fully ready in the canvas
+                // Trigger dynamic texture injection once GLB scene geometry is fully loaded in the canvas
                 beeViewer.addEventListener("load", async () => {
                     try {
-                        // Create GPU textures inside model-viewer using our blob URLs
-                        const baseColorTex = textureUrlsMap["gltf_embedded_0.png"] ? await beeViewer.createTexture(textureUrlsMap["gltf_embedded_0.png"]) : null;
-                        const normalTex = textureUrlsMap["gltf_embedded_3.png"] ? await beeViewer.createTexture(textureUrlsMap["gltf_embedded_3.png"]) : null;
-                        const occlusionTex = textureUrlsMap["gltf_embedded_2.png"] ? await beeViewer.createTexture(textureUrlsMap["gltf_embedded_2.png"]) : null;
-                        const metallicRoughnessTex = textureUrlsMap["gltf_embedded_1@channels=rgb.png"] ? await beeViewer.createTexture(textureUrlsMap["gltf_embedded_1@channels=rgb.png"]) : null;
+                        // Create GPU textures inside model-viewer using our server's raw image files
+                        const baseColorTex = await beeViewer.createTexture("gltf_embedded_0.png");
+                        const normalTex = await beeViewer.createTexture("gltf_embedded_3.png");
+                        const occlusionTex = await beeViewer.createTexture("gltf_embedded_2.png");
+                        const metallicRoughnessTex = await beeViewer.createTexture("gltf_embedded_1@channels=RGB.png");
 
                         const materials = beeViewer.model.materials;
 
@@ -1112,7 +1094,7 @@
                 });
 
             } catch (error) {
-                console.error("Error loading bee.zip assets:", error);
+                console.error("Error loading direct bee assets:", error);
                 beeLoader.innerHTML = `<span style="color: #ff4757; font-size: 8px; font-weight: bold;">Error loading: ${error.message}</span>`;
             }
         }
@@ -1234,6 +1216,39 @@
                     statsColumn3.classList.add("hide-stats");
                 } else {
                     statsColumn3.classList.remove("hide-stats");
+                }
+
+                // Smooth Rocket Controller (Controls rocket.glb inside Section 1)
+                const rocket = document.getElementById("rocket-viewer");
+                if (rocket) {
+                    let xPercent = 50;
+                    let yPixels = -200;
+                    let rotateDeg = 0;
+
+                    if (s3Bounded <= 0.50) {
+                        // Phase 1: From off-screen bottom to viewport center vertically
+                        const p1 = s3Bounded / 0.50;
+                        yPixels = -200 + p1 * (window.innerHeight * 0.5 + 200);
+                        xPercent = 50;
+                        rotateDeg = 0;
+                    } else if (s3Bounded <= 0.65) {
+                        // Phase 2: Gracefully tilt 90 degrees pointing to the right
+                        const pRot = (s3Bounded - 0.50) / 0.15;
+                        yPixels = window.innerHeight * 0.5;
+                        xPercent = 50;
+                        rotateDeg = pRot * 90;
+                    } else {
+                        // Phase 3: Fly from Left to Right off-screen
+                        const p2 = (s3Bounded - 0.65) / 0.35;
+                        yPixels = window.innerHeight * 0.5;
+                        xPercent = 50 + p2 * 75; // Extends smoothly up to 125%
+                        rotateDeg = 90;
+                    }
+
+                    // Applying computed coordinates with hardware rendering transitions
+                    rocket.style.bottom = `${yPixels}px`;
+                    rocket.style.left = `${xPercent}%`;
+                    rocket.style.transform = `translate(-50%, 50%) rotate(${rotateDeg}deg)`;
                 }
 
                 // 3. Section 3 Timeline Updates (scroll-section-1, 240 frames, bottom of page) [1]
@@ -1402,7 +1417,7 @@
         loadAndExtractZip1(); // Load Section 3 assets (swapped to 240 frames ZIP) [1]
         initScrollListener();
         initCursorTracker();
-        loadBeeFromZip();
+        loadBeeDirect(); // Swapped out ZIP extraction with highly efficient direct asset binding
     </script>
 </body>
 </html>
