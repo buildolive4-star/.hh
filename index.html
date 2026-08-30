@@ -33,7 +33,7 @@
             height: 100vh;
             z-index: -10;
             overflow: hidden;
-            pointer-events: none; /* Prevents direct interaction with iframe */
+            pointer-events: none; 
         }
 
         .video-bg-container iframe {
@@ -57,7 +57,7 @@
             height: 100%;
             background: rgba(4, 4, 10, 0.45); /* Soft cinematic tint */
             z-index: -5;
-            pointer-events: auto; /* Absorbs pointer events to prevent controls from appearing */
+            pointer-events: auto; 
         }
 
         /* 1. Top Bar */
@@ -79,7 +79,7 @@
         }
 
         .top-bar-title {
-            font-size: 13px;
+            font-size: clamp(10px, 3vw, 13px);
             font-weight: 700;
             letter-spacing: 2px;
             color: #ffffff;
@@ -95,7 +95,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 11px;
+            font-size: clamp(9px, 2.5vw, 11px);
             letter-spacing: 1px;
             text-transform: uppercase;
             transition: all 0.3s ease;
@@ -121,7 +121,7 @@
             transition: width 0.1s ease-out;
         }
 
-        /* Scroll Containers for Swapped Sections */
+        /* Scroll Containers */
         .scroll-container {
             height: 450vh; 
             position: relative;
@@ -129,30 +129,33 @@
         }
 
         #scroll-section-3 {
-            margin-top: 60px; /* Now at top as Section 1, offsets for fixed Top Bar */
+            margin-top: 60px; 
         }
 
         #scroll-section-1 {
-            margin-top: 0px; /* Now at bottom as Section 3 */
+            margin-top: 0px; 
         }
 
-        /* Sticky Wrapper */
+        /* Sticky Wrapper with Mobile Optimization */
         .sticky-wrapper {
             position: sticky;
             top: 60px;
             height: calc(100vh - 60px);
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             overflow: hidden;
             background: transparent;
+            padding: 15px 0;
         }
 
         /* Upper Portion (Cinematic Sequence) with Advanced Glowing Border */
         .video-container {
             width: 100%;
             aspect-ratio: 16 / 9;
+            max-height: 55vh;
             position: relative;
-            overflow: visible; /* Allows bottom border glow to spill out elegantly */
+            overflow: visible; 
             background-color: transparent;
             display: flex;
             justify-content: center;
@@ -178,9 +181,7 @@
             height: 100%;
             object-fit: contain;
             display: none; 
-            /* CINEMATIC MAX QUALITY RENDERING SETTINGS */
             image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
             image-rendering: auto;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
@@ -189,7 +190,7 @@
             will-change: transform;
         }
 
-        /* 3D Rocket specific layout and butter-smooth scrolling transitions */
+        /* 3D Rocket specific layout and smooth transitions */
         #rocket-viewer {
             position: absolute;
             width: 180px;
@@ -201,29 +202,28 @@
             pointer-events: none;
             --poster-color: transparent;
             background-color: transparent;
-            /* Silky smooth kinetic tracking */
             transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), left 0.15s cubic-bezier(0.25, 1, 0.5, 1), bottom 0.15s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* Dynamic Scroll-Triggered Info Overlay - RAW NO BOX FORMAT */
+        /* Dynamic Scroll-Triggered Info Overlay */
         .scroll-text-overlay {
             position: absolute;
-            top: 50%;
+            top: 45%;
             left: 10%;
             transform: translateY(-50%);
-            max-width: 580px; /* Widened for cinematic visual flow */
-            background: transparent; /* No Box Card background */
-            border: none; /* No box borders */
+            max-width: 580px; 
+            background: transparent; 
+            border: none; 
             border-radius: 0;
-            padding: 0; /* No box padding */
+            padding: 0; 
             backdrop-filter: none;
             -webkit-backdrop-filter: none;
-            box-shadow: none; /* No box shadows */
+            box-shadow: none; 
             opacity: 0;
             transform: translateY(-50%) scale(0.95);
             transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
             z-index: 100;
-            pointer-events: none; /* Let pointer pass through to avoid disrupting bee drag tracking */
+            pointer-events: none; 
         }
 
         .scroll-text-overlay.active {
@@ -233,74 +233,27 @@
 
         /* Large glowing titles */
         .scroll-text-title {
-            font-size: 38px; /* Very Large Text */
+            font-size: clamp(22px, 5vw, 38px); 
             font-weight: 800;
             color: #00f2fe;
             margin-bottom: 12px;
             letter-spacing: 1px;
-            text-shadow: 0 0 15px rgba(0, 242, 254, 0.6), 0 2px 10px rgba(0, 0, 0, 0.85); /* Ensures high readability */
+            text-shadow: 0 0 15px rgba(0, 242, 254, 0.6), 0 2px 10px rgba(0, 0, 0, 0.85); 
         }
 
         /* Large readable description blocks */
         .scroll-text-desc {
-            font-size: 18px; /* Very Large Description */
+            font-size: clamp(13px, 3.5vw, 18px); 
             color: #ffffff;
             line-height: 1.6;
             font-weight: 500;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); /* Drop shadow overlay for high legibility */
-        }
-
-        @media (max-width: 768px) {
-            .scroll-text-overlay {
-                left: 5%;
-                right: 5%;
-                max-width: 90%;
-                top: auto;
-                bottom: 30px;
-                transform: scale(0.95);
-            }
-            .scroll-text-overlay.active {
-                transform: scale(1);
-            }
-            .clipart-box {
-                min-height: 220px; /* Responsive height for mobile screens */
-            }
-            .scroll-text-title {
-                font-size: 28px;
-            }
-            .scroll-text-desc {
-                font-size: 15px;
-            }
-            #rocket-viewer {
-                width: 120px; /* Highly optimized smaller size for mobile screens */
-                height: 120px;
-            }
-            .next-section {
-                padding: 40px 10px; /* Cleaner padding to avoid cutoffs on tall phones */
-            }
-            .slider-container {
-                padding: 20px;
-                gap: 15px;
-            }
-            .desc-title {
-                font-size: 20px;
-                margin-bottom: 8px;
-            }
-            .desc-text {
-                font-size: 13px;
-                line-height: 1.5;
-            }
-            .slide-btn {
-                padding: 8px 16px;
-                font-size: 11px;
-            }
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); 
         }
 
         /* Lower Portion (Dashboard) */
         .content-container {
             width: 100%;
-            flex: 1;
-            padding: 15px;
+            padding: 10px 15px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -313,28 +266,27 @@
         .dashboard-grid {
             display: flex;
             flex-direction: column; 
-            gap: 20px;
+            gap: 15px;
             align-items: center;
             justify-content: center;
             width: 100%;
             max-width: 800px;
-            margin-top: 10px;
             transition: all 0.5s ease;
         }
 
         /* Interactive Floating 3D Bee Box (Cursor Functionality) */
         .bee-box {
-            position: fixed; /* Free-floating regardless of scroll container */
-            width: 200px;
-            height: 200px;
-            background: transparent; /* No card background */
-            border: none; /* No borders around bee */
+            position: fixed; 
+            width: 160px;
+            height: 160px;
+            background: transparent; 
+            border: none; 
             border-radius: 0;
             overflow: visible;
-            box-shadow: none; /* No shadow clutter */
-            pointer-events: none; /* Pointer passes through to background */
-            z-index: 1500; /* Stays above all timeline layers */
-            transform: translate(-50%, -50%); /* Centered exactly on the coordinates */
+            box-shadow: none; 
+            pointer-events: none; 
+            z-index: 1500; 
+            transform: translate(-50%, -50%); 
             left: 50%;
             top: 50%;
             transition: transform 0.08s cubic-bezier(0.25, 1, 0.5, 1);
@@ -343,12 +295,12 @@
         /* Dynamic Neon Glow Light under the Bee */
         .bee-glow-trail {
             position: fixed;
-            width: 110px;
-            height: 110px;
+            width: 90px;
+            height: 90px;
             background: radial-gradient(circle, rgba(0, 242, 254, 0.35) 0%, rgba(79, 172, 254, 0.1) 55%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
-            z-index: 1450; /* Just below the bee */
+            z-index: 1450; 
             transform: translate(-50%, -50%);
             mix-blend-mode: screen;
             filter: blur(5px);
@@ -357,21 +309,11 @@
 
         /* Flying Hover Cycle */
         @keyframes flyHover {
-            0% {
-                transform: translateY(0px) rotate(0deg);
-            }
-            25% {
-                transform: translateY(-5px) rotate(-1.5deg);
-            }
-            50% {
-                transform: translateY(-10px) rotate(1deg);
-            }
-            75% {
-                transform: translateY(-4px) rotate(-0.5deg);
-            }
-            100% {
-                transform: translateY(0px) rotate(0deg);
-            }
+            0% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-5px) rotate(-1.5deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+            75% { transform: translateY(-4px) rotate(-0.5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
         }
 
         /* Model Viewer style with flight animation */
@@ -383,7 +325,7 @@
             animation: flyHover 4s ease-in-out infinite; 
         }
 
-        /* Statistics column styling */
+        /* Statistics column styling (Optimized for Mobile/Desktop) */
         .stats-column {
             display: flex;
             flex-direction: row; 
@@ -392,55 +334,43 @@
             max-width: 500px;
             justify-content: center;
             opacity: 1;
-            max-height: 150px;
-            transition: opacity 0.5s ease, transform 0.5s ease, max-height 0.5s ease, margin-top 0.5s ease;
-            transform: translateY(0);
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
-        /* Scroll karne par stats collapse ho jayenge */
         .stats-column.hide-stats {
-            opacity: 0.15; /* Becomes highly transparent to maintain absolute focus on bee */
-        }
-
-        @media (max-width: 600px) {
-            .stats-column {
-                flex-direction: column;
-                gap: 10px;
-                max-height: 300px;
-            }
+            opacity: 0.15; 
         }
 
         .stat-card {
             background: rgba(10, 10, 25, 0.4);
             border: 1px solid rgba(0, 242, 254, 0.1);
-            padding: 10px;
+            padding: 10px 15px;
             border-radius: 10px;
             backdrop-filter: blur(10px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            text-align: left;
-            padding-left: 15px;
+            text-align: center;
             flex: 1;
         }
 
         .stat-val {
-            font-size: 16px;
+            font-size: clamp(13px, 3.5vw, 16px);
             font-weight: bold;
             color: #00f2fe;
             margin-bottom: 2px;
         }
 
         .stat-label {
-            font-size: 9px;
+            font-size: clamp(8px, 2vw, 10px);
             text-transform: uppercase;
             letter-spacing: 1px;
             color: #72729a;
         }
 
-        /* 2. Transparent Advanced Next Section (With transparent background showing video) */
+        /* 2. Transparent Advanced Next Section */
         .next-section {
             min-height: 100vh;
             position: relative;
-            background: transparent; /* Changed to transparent as requested for forest video overlay */
+            background: transparent; 
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -451,7 +381,6 @@
             z-index: 10;
         }
 
-        /* Dark Tint overlay to maintain high contrast over video */
         .next-section::before {
             content: '';
             position: absolute;
@@ -459,22 +388,22 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(4, 4, 10, 0.55); /* Keeping matching soft cinematic tint, removed heavy blur */
+            background: rgba(4, 4, 10, 0.55); 
             z-index: -1;
         }
 
-        /* Dynamic Clipart Slider Structure - Stacked vertically + White Transparent (Glassmorphism) */
+        /* Dynamic Clipart Slider Structure with Glassmorphism */
         .slider-container {
             display: flex;
-            flex-direction: column; /* Stacked layout (Upper image, lower description) */
+            flex-direction: column; 
             align-items: center;
             justify-content: flex-start;
-            width: 95%; /* Responsive width */
-            max-width: 950px; /* ENLARGED: Significantly wider box */
-            background: rgba(255, 255, 255, 0.12); /* White transparent glass background */
-            border: 1px solid rgba(255, 255, 255, 0.25); /* Translucent white border */
+            width: 95%; 
+            max-width: 950px; 
+            background: rgba(255, 255, 255, 0.12); 
+            border: 1px solid rgba(255, 255, 255, 0.25); 
             border-radius: 20px;
-            padding: 40px; /* More spacious padding */
+            padding: 40px; 
             gap: 25px;
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
@@ -486,19 +415,18 @@
         /* Clipart upper viewport (16:9 Aspect Ratio Card) */
         .clipart-box {
             width: 100%;
-            aspect-ratio: 16 / 9; /* Strict 16:9 Aspect Ratio */
-            background: rgba(255, 255, 255, 0.08); /* Inner white transparent card */
+            aspect-ratio: 16 / 9; 
+            background: rgba(255, 255, 255, 0.08); 
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* Prevent character from overflowing when sliding */
+            overflow: hidden; 
             padding: 15px;
             position: relative;
         }
 
-        /* The Main Background Image displayed inside the card */
         .slide-main-img {
             position: absolute;
             top: 0;
@@ -512,15 +440,13 @@
             transition: opacity 0.5s ease;
         }
 
-        /* The Clipart on top of main image with sliding transitions and contrast tuning */
         .clipart-box img#clipart-img {
             max-width: 90%;
             max-height: 90%;
             object-fit: contain;
             filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.3));
             position: relative;
-            z-index: 2; /* Stays above slide-main-img */
-            /* HIGH QUALITY RENDERING FOR CLIPART */
+            z-index: 2; 
             image-rendering: -webkit-optimize-contrast;
             image-rendering: auto;
             backface-visibility: hidden;
@@ -528,7 +454,7 @@
             will-change: transform;
         }
 
-        /* Description lower viewport (Large description area) */
+        /* Description lower viewport */
         .desc-box {
             width: 100%;
             display: flex;
@@ -540,7 +466,7 @@
         }
 
         .desc-title {
-            font-size: 28px; /* Enlarged title */
+            font-size: clamp(20px, 4vw, 28px); 
             font-weight: 700;
             color: #00f2fe;
             margin-bottom: 12px;
@@ -549,8 +475,8 @@
         }
 
         .desc-text {
-            font-size: 16px; /* Enlarged and readable */
-            color: #e0e0f5; /* Bright off-white text for high contrast readability over glass */
+            font-size: clamp(13px, 3vw, 16px); 
+            color: #e0e0f5; 
             line-height: 1.7;
             margin-bottom: 10px;
             transition: opacity 0.4s ease;
@@ -563,7 +489,7 @@
             justify-content: space-between;
             width: 100%;
             margin-top: 25px;
-            max-width: 950px; /* Matches wider slider container */
+            max-width: 950px; 
         }
 
         .slide-btn {
@@ -574,7 +500,7 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 13px;
+            font-size: clamp(11px, 2.5vw, 13px);
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -634,6 +560,42 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Responsive Media Queries for Mobile/Tablet Optimization */
+        @media (max-width: 768px) {
+            .scroll-text-overlay {
+                left: 5%;
+                right: 5%;
+                max-width: 90%;
+                top: 40%;
+            }
+            #rocket-viewer {
+                width: 110px; 
+                height: 110px;
+            }
+            .bee-box {
+                width: 110px;
+                height: 110px;
+            }
+            .bee-glow-trail {
+                width: 65px;
+                height: 65px;
+            }
+            .slider-container {
+                padding: 15px;
+                gap: 15px;
+                border-radius: 12px;
+            }
+            .stats-column {
+                gap: 10px;
+            }
+            .stat-card {
+                padding: 8px 10px;
+            }
+            .next-section {
+                padding: 50px 15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -651,18 +613,18 @@
     <!-- Transparent Blocking Overlay to isolate video interactions -->
     <div class="video-overlay"></div>
 
-    <!-- Real-time lighting glow under the Bee (Moved to body level so it doesn't scroll off) -->
+    <!-- Real-time lighting glow under the Bee -->
     <div class="bee-glow-trail" id="bee-glow-trail"></div>
 
-    <!-- 1. Floating 3D Bee (Moved to body level so it appears over the entire page including next-section) -->
+    <!-- 1. Floating 3D Bee -->
     <div class="bee-box" id="3d-bee-box">
         <!-- Internal loader for status -->
-        <div id="bee-loader" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 10px; color: #00f2fe; text-align: center; z-index: 5; width: 100%; padding: 10px;">
+        <div id="bee-loader" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 9px; color: #00f2fe; text-align: center; z-index: 5; width: 100%; padding: 10px;">
             <div class="spinner" style="width: 20px; height: 20px; border-width: 2px; margin-bottom: 8px;"></div>
             APPLYING BEE TEXTURES...
         </div>
 
-        <!-- Native Model Viewer (Skeletal autoplay enabled) -->
+        <!-- Native Model Viewer -->
         <model-viewer 
             id="bee-viewer"
             alt="3D Bee Model" 
@@ -687,12 +649,12 @@
     <div id="scroll-progress"></div>
 
     <!-- ========================================================================= -->
-    <!-- SECTION 1: Swapped to Old Scroll Sequence (Using frames_24fps_enhanced.zip with 192 frames) -->
+    <!-- SECTION 1: Old Scroll Sequence (Using frames_24fps_enhanced.zip with 192 frames) -->
     <!-- ========================================================================= -->
     <div class="scroll-container" id="scroll-section-3">
         <div class="sticky-wrapper">
             
-            <!-- Floating 3D Rocket Model (Controlled beautifully via Section 1 scrolling) -->
+            <!-- Floating 3D Rocket Model -->
             <model-viewer 
                 id="rocket-viewer"
                 src="rocket.glb"
@@ -740,7 +702,6 @@
     <!-- SECTION 2: Dynamic Clipart Slider (Middle Section) -->
     <!-- ========================================================================= -->
     <div class="next-section" id="next-section">
-        <!-- New Stacked White-Translucent Glass container -->
         <div class="slider-container">
             <!-- Upper Clipart Image Container (Strict 16:9 Aspect Ratio) -->
             <div class="clipart-box">
@@ -767,7 +728,7 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- SECTION 3: Swapped to New Scroll Sequence (Using ezgif-69d75f05336c06b0-jpg.zip with 240 frames) [1] -->
+    <!-- SECTION 3: Auto-playing Video Sequence (Using ezgif-69d75f05336c06b0-jpg.zip with 240 frames) -->
     <!-- ========================================================================= -->
     <div class="scroll-container" id="scroll-section-1">
         <div class="sticky-wrapper">
@@ -793,11 +754,11 @@
                     <div class="stats-column" id="stats-column-1">
                         <div class="stat-card">
                             <div class="stat-val" id="frame-counter-1">- / 240</div>
-                            <div class="stat-label">Section 3 Frame</div>
+                            <div class="stat-label">Video Frame</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-val" id="percent-counter-1">0%</div>
-                            <div class="stat-label">Scrub Progress</div>
+                            <div class="stat-label">Video Progress</div>
                         </div>
                     </div>
                 </div>
@@ -811,7 +772,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-        // Your web app's Firebase configuration
         const firebaseConfig = {
           apiKey: "AIzaSyDm9kd5XneXxdFEqfVgCY-lkc8s2JlDdiA",
           authDomain: "fanzoen.firebaseapp.com",
@@ -823,22 +783,18 @@
           measurementId: "G-R8H7B5SS23"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Fetch scroll-triggered card texts in real-time
         const scrollTextsRef = ref(db, 'fanzoen_settings/scrollTexts');
         onValue(scrollTextsRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                // Parse object format or array format dynamically
                 window.scrollTexts = Array.isArray(data) ? data : Object.values(data);
                 console.log("Firebase Scroll Texts Configured:", window.scrollTexts);
             }
         });
 
-        // Fetch dynamic next section slider properties in real-time
         const secondSectionRef = ref(db, 'fanzoen_settings/secondSection');
         onValue(secondSectionRef, (snapshot) => {
             const data = snapshot.val();
@@ -851,10 +807,8 @@
     </script>
 
     <script>
-        // Global ImgBB API Key constant configured as requested
         const IMGBB_API_KEY = "75190ec2dbdc1177fc656369c605c1d7";
 
-        // Default local fallback data inside Javascript
         const defaultScrollTexts = [
             {
                 title: "Exploring Rainy Forest",
@@ -870,7 +824,6 @@
             }
         ];
 
-        // Default slider fallback data inside Javascript
         const defaultSecondSectionData = {
             bgImage: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1950&q=80",
             slides: [
@@ -887,19 +840,17 @@
             ]
         };
 
-        // Initialize dynamic window bindings
         window.scrollTexts = defaultScrollTexts;
         window.secondSectionData = defaultSecondSectionData;
 
-        // Sequence 3 Specifications (frames_24fps_enhanced.zip - 192 frames, Swapped to Section 1)
+        // Sequence 3 Specifications (Section 1)
         const totalFrames3 = 192;
         const zipFileName3 = "frames_24fps_enhanced.zip";
 
-        // Sequence 1 Specifications (ezgif-69d75f05336c06b0-jpg.zip - 240 frames, Swapped to Section 3) [1]
+        // Sequence 1 Specifications (Section 3 - Auto Play)
         const totalFrames1 = 240;
-        const zipFileName1 = "ezgif-69d75f05336c06b0-jpg.zip"; // Updated to newest ZIP file from Repository [1]
+        const zipFileName1 = "ezgif-69d75f05336c06b0-jpg.zip"; 
 
-        // Section 1 DOM Elements (Now mapped to scroll-section-3, 192 frames)
         const imgElement3 = document.getElementById("sequence-img-3");
         const loaderContainer3 = document.getElementById("loader-container-3");
         const progressText3 = document.getElementById("progress-3");
@@ -911,7 +862,6 @@
         const overlayTitle3 = document.getElementById("scroll-text-title-3");
         const overlayDesc3 = document.getElementById("scroll-text-desc-3");
 
-        // Section 3 DOM Elements (Now mapped to scroll-section-1, 240 frames) [1]
         const imgElement1 = document.getElementById("sequence-img-1");
         const loaderContainer1 = document.getElementById("loader-container-1");
         const progressText1 = document.getElementById("progress-1");
@@ -932,9 +882,16 @@
         const frameURLs1 = [];
         const frameURLs3 = [];
 
-        // Smooth Cursor Follower Physics (Lerp variables)
+        // Auto play tracking for Section 3 Sequence
+        let isSec1Loaded = false;
+        let sec1CurrentFrame = 1;
+        let sec1LastFrameTime = 0;
+        const sec1TargetFPS = 24; 
+        const sec1FrameInterval = 1000 / sec1TargetFPS;
+
+        // Smooth Cursor Follower Physics
         let targetX = window.innerWidth / 2;
-        let targetY = window.innerHeight / 2 - 60; // Initial 60px offset
+        let targetY = window.innerHeight / 2 - 60; 
         let currentX = window.innerWidth / 2;
         let currentY = window.innerHeight / 2 - 60;
         
@@ -942,21 +899,19 @@
         let scrollVelocity = 0;
 
         let currentSlideIndex = 0;
-        let slideDirection = "next"; // Global helper to store slider transition direction ("next" or "prev")
+        let slideDirection = "next"; 
 
-        // Correct zip internal path helper for Section 3 (padded with 4 digits inside folder, top section)
         const getSec3FrameName = (index) => {
             const paddedIndex = String(index).padStart(4, '0');
             return `frames_24fps_enhanced/frame_${paddedIndex}.jpg`;
         };
 
-        // Correct zip internal path helper for Section 1 (padded with 3 digits, bottom section) [1]
         const getSec1FrameName = (index) => {
             const paddedIndex = String(index).padStart(3, '0');
             return `ezgif-frame-${paddedIndex}.jpg`;
         };
 
-        // Extract frames ZIP for Section 3 (Swapped to Top Section)
+        // Extract ZIP for Section 1 (Top Section - Manual Scroll)
         async function loadAndExtractZip3() {
             try {
                 const response = await fetch(zipFileName3);
@@ -971,7 +926,6 @@
                     const fileName = getSec3FrameName(i);
                     let file = zip.file(fileName);
 
-                    // Fallback to search inside zip directories
                     if (!file) {
                         const targetShortName = `frame_${String(i).padStart(4, '0')}.jpg`;
                         const match = Object.keys(zip.files).find(key => key.endsWith(targetShortName));
@@ -985,7 +939,6 @@
                         const objectURL = URL.createObjectURL(blob);
                         frameURLs3[i] = objectURL;
 
-                        // OPTIMIZATION: Decode images off the main thread to prevent scrolling drops/flickers [1]
                         const imgObj = new Image();
                         imgObj.src = objectURL;
                         if (imgObj.decode) {
@@ -1010,7 +963,7 @@
             }
         }
 
-        // Extract frames ZIP for Section 1 (Swapped to Bottom Section) [1]
+        // Extract ZIP for Section 3 (Bottom Section - Auto Play)
         async function loadAndExtractZip1() {
             try {
                 const response = await fetch(zipFileName1);
@@ -1025,7 +978,6 @@
                     const fileName = getSec1FrameName(i);
                     let file = zip.file(fileName);
                     
-                    // Fallback to search inside zip directories [1]
                     if (!file) {
                         const targetShortName = `ezgif-frame-${String(i).padStart(3, '0')}.jpg`;
                         const match = Object.keys(zip.files).find(key => key.endsWith(targetShortName));
@@ -1039,7 +991,6 @@
                         const objectURL = URL.createObjectURL(blob);
                         frameURLs1[i] = objectURL;
 
-                        // OPTIMIZATION: Decode images off the main thread to prevent scrolling drops/flickers [1]
                         const imgObj = new Image();
                         imgObj.src = objectURL;
                         if (imgObj.decode) {
@@ -1055,7 +1006,10 @@
                     imgElement1.src = frameURLs1[1];
                     imgElement1.style.display = "block";
                     loaderContainer1.style.display = "none";
-                    frameCounter1.innerText = `1 / ${totalFrames1}`;
+                    
+                    isSec1Loaded = true;
+                    // Auto Play Loop starting point
+                    requestAnimationFrame(animateSection1Video);
                 }
 
             } catch (error) {
@@ -1064,16 +1018,34 @@
             }
         }
 
-        // Direct loading of Bee.glb and raw textures from repository folder
+        // Auto-play Animation loop for Section 3
+        function animateSection1Video(timestamp) {
+            if (!isSec1Loaded) return;
+            if (!sec1LastFrameTime) sec1LastFrameTime = timestamp;
+
+            const elapsed = timestamp - sec1LastFrameTime;
+
+            if (elapsed >= sec1FrameInterval) {
+                sec1CurrentFrame = (sec1CurrentFrame % totalFrames1) + 1;
+                
+                if (frameURLs1[sec1CurrentFrame]) {
+                    imgElement1.src = frameURLs1[sec1CurrentFrame];
+                    frameCounter1.innerText = `${sec1CurrentFrame} / ${totalFrames1}`;
+                    percentCounter1.innerText = `${Math.round((sec1CurrentFrame / totalFrames1) * 100)}%`;
+                }
+                
+                sec1LastFrameTime = timestamp - (elapsed % sec1FrameInterval);
+            }
+            requestAnimationFrame(animateSection1Video);
+        }
+
+        // Direct loading of Bee.glb and raw textures
         async function loadBeeDirect() {
             try {
-                // Set raw GLB source as Object URL directly
                 beeViewer.src = "Bee.glb";
 
-                // Trigger dynamic texture injection once GLB scene geometry is fully loaded in the canvas
                 beeViewer.addEventListener("load", async () => {
                     try {
-                        // Create GPU textures inside model-viewer using our server's raw image files
                         const baseColorTex = await beeViewer.createTexture("gltf_embedded_0.png");
                         const normalTex = await beeViewer.createTexture("gltf_embedded_3.png");
                         const occlusionTex = await beeViewer.createTexture("gltf_embedded_2.png");
@@ -1082,37 +1054,30 @@
                         const materials = beeViewer.model.materials;
 
                         for (const material of materials) {
-                            // 1. Set Base Color Map
                             if (baseColorTex && material.pbrMetallicRoughness) {
-                                // If baseColorTexture slot exists, set it
                                 if (material.pbrMetallicRoughness.baseColorTexture) {
                                     material.pbrMetallicRoughness.baseColorTexture.setTexture(baseColorTex);
                                 }
                             }
 
-                            // 2. Set Normal Map
                             if (normalTex && material.normalTexture) {
                                 material.normalTexture.setTexture(normalTex);
                             }
 
-                            // 3. Set Ambient Occlusion Map
                             if (occlusionTex && material.occlusionTexture) {
                                 material.occlusionTexture.setTexture(occlusionTex);
                             }
 
-                            // 4. Set Metallic Roughness Map
                             if (metallicRoughnessTex && material.pbrMetallicRoughness && material.pbrMetallicRoughness.metallicRoughnessTexture) {
                                 material.pbrMetallicRoughness.metallicRoughnessTexture.setTexture(metallicRoughnessTex);
                             }
                         }
 
-                        // Hide spinner and display textured model
                         beeLoader.style.display = "none";
                         beeViewer.style.opacity = "1";
 
                     } catch (texError) {
                         console.error("Failed to map textures programmatically:", texError);
-                        // Fallback: Display model even if texture injection throws error
                         beeLoader.style.display = "none";
                         beeViewer.style.opacity = "1";
                     }
@@ -1124,16 +1089,15 @@
             }
         }
 
-        // Tracking Pointer Coordinates globally
+        // Tracking Pointer Coordinates
         function initCursorTracker() {
-            // Instant snap-on-touch handler (offsets vertically by 60px so finger does not cover bee)
             const handleInstantSnap = (e) => {
                 const x = e.touches ? e.touches[0].clientX : e.clientX;
                 const y = e.touches ? e.touches[0].clientY : e.clientY;
                 targetX = x;
-                targetY = y - 60; // Offset above fingertip
+                targetY = y - 60; 
                 currentX = x; 
-                currentY = y - 60; // Snaps current coordinates instantly
+                currentY = y - 60; 
             };
 
             const handlePointerUpdate = (e) => {
@@ -1146,39 +1110,32 @@
                     y = e.clientY;
                 }
                 targetX = x;
-                targetY = y - 60; // Constant offset above fingertip
+                targetY = y - 60; 
             };
 
-            // Capture touch / click event instantly for zero lag response
             window.addEventListener("pointerdown", handleInstantSnap);
             window.addEventListener("touchstart", handleInstantSnap);
 
-            // Capture standard cursor/touch drags
             window.addEventListener("pointermove", handlePointerUpdate);
-            window.addEventListener("touchmove", handlePointerUpdate);
+            window.addEventListener("touchmove", handlePointerUpdate, { passive: true });
 
-            // Animate physics simulation
             const lerp = (start, end, amt) => (1 - amt) * start + amt * end;
 
             const animateFlightFollower = () => {
-                // Tracking is responsive (0.24) to keep bee directly under pointer/touch
                 currentX = lerp(currentX, targetX, 0.24); 
                 currentY = lerp(currentY, targetY, 0.24);
 
-                // Calculate tilt based on movement direction speed
                 const dx = targetX - currentX;
                 const dy = targetY - currentY;
-                const tiltX = Math.max(-15, Math.min(15, dx * 0.35)); // Left/right tilt
-                const tiltY = Math.max(-10, Math.min(10, dy * -0.2)); // Up/down tilt
+                const tiltX = Math.max(-15, Math.min(15, dx * 0.35)); 
+                const tiltY = Math.max(-10, Math.min(10, dy * -0.2)); 
 
                 beeBox.style.left = `${currentX}px`;
                 beeBox.style.top = `${currentY}px`;
 
-                // Set dynamic light aura to move in sync with coordinates
                 beeGlow.style.left = `${currentX}px`;
                 beeGlow.style.top = `${currentY}px`;
                 
-                // Set halke tilt on translation values
                 beeBox.style.transform = `translate(-50%, -50%) rotateY(${tiltX * 1.5}deg) rotateX(${tiltY * 1.5}deg) rotateZ(${tiltX * 0.5}deg)`;
 
                 requestAnimationFrame(animateFlightFollower);
@@ -1187,7 +1144,7 @@
             animateFlightFollower();
         }
 
-        // Unified function to update textual overlay active statuses based on scroll bounding fractions
+        // Overlay controller based on scroll bounded fractions
         function updateOverlay(boundedFraction, overlay, title, desc) {
             let activeTextFound = false;
             const currentTexts = window.scrollTexts || defaultScrollTexts;
@@ -1207,11 +1164,9 @@
             }
         }
 
-        // OPTIMIZATION: Debounce scroll events using requestAnimationFrame (rAF) to prevent stutter on Mobile/Desktop
         let scrollScheduled = false;
 
         function initScrollListener() {
-            // passive: true allows instant fluid page scrolls on touch screens [1]
             window.addEventListener('scroll', () => {
                 if (!scrollScheduled) {
                     scrollScheduled = true;
@@ -1220,24 +1175,21 @@
             }, { passive: true });
         }
 
-        // Dedicated rendering pass aligned directly with screen refreshes (60Hz, 120Hz, etc.)
         function updateScrollPhysics() {
             scrollScheduled = false;
 
             const scrollTop = window.scrollY || document.documentElement.scrollTop;
             const docHeight = document.documentElement.scrollHeight - window.innerHeight;
             
-            // 1. Overall global progress bar updates
             const overallProgress = (scrollTop / docHeight) * 100;
             progressBar.style.width = `${overallProgress}%`;
 
-            // Calculate wind velocity impact on target coordinates
             const currentScrollY = window.scrollY;
             scrollVelocity = currentScrollY - lastScrollY;
             lastScrollY = currentScrollY;
             targetY += scrollVelocity * 0.25;
 
-            // 2. Section 1 Timeline Updates (scroll-section-3, 192 frames, top of page)
+            // Section 1 (scroll-section-3, 192 frames, Manual Scroll)
             const s3Top = scrollSection3.offsetTop;
             const s3Height = scrollSection3.scrollHeight;
             const s3Fraction = (scrollTop - s3Top) / (s3Height - window.innerHeight);
@@ -1257,7 +1209,7 @@
                 statsColumn3.classList.remove("hide-stats");
             }
 
-            // Smooth Rocket Controller (Controls rocket.glb inside Section 1)
+            // Rocket controller logic
             const rocket = document.getElementById("rocket-viewer");
             if (rocket) {
                 let xPercent = 50;
@@ -1265,43 +1217,33 @@
                 let rotateDeg = 0;
 
                 if (s3Bounded <= 0.50) {
-                    // Phase 1: From off-screen bottom to viewport center vertically
                     const p1 = s3Bounded / 0.50;
                     yPixels = -200 + p1 * (window.innerHeight * 0.5 + 200);
                     xPercent = 50;
                     rotateDeg = 0;
                 } else if (s3Bounded <= 0.65) {
-                    // Phase 2: Gracefully tilt 90 degrees pointing to the right
                     const pRot = (s3Bounded - 0.50) / 0.15;
                     yPixels = window.innerHeight * 0.5;
                     xPercent = 50;
                     rotateDeg = pRot * 90;
                 } else {
-                    // Phase 3: Fly from Left to Right off-screen
                     const p2 = (s3Bounded - 0.65) / 0.35;
                     yPixels = window.innerHeight * 0.5;
-                    xPercent = 50 + p2 * 75; // Extends smoothly up to 125%
+                    xPercent = 50 + p2 * 75; 
                     rotateDeg = 90;
                 }
 
-                // Applying computed coordinates with hardware rendering transitions
                 rocket.style.bottom = `${yPixels}px`;
                 rocket.style.left = `${xPercent}%`;
                 rocket.style.transform = `translate(-50%, 50%) rotate(${rotateDeg}deg)`;
             }
 
-            // 3. Section 3 Timeline Updates (scroll-section-1, 240 frames, bottom of page) [1]
+            // Section 3 (scroll-section-1, Auto playing video, scroll-dependent overlay)
             const s1Top = scrollSection1.offsetTop;
             const s1Height = scrollSection1.scrollHeight;
             const s1Fraction = (scrollTop - s1Top) / (s1Height - window.innerHeight);
             const s1Bounded = Math.max(0, Math.min(1, s1Fraction));
-            const frameIndex1 = Math.max(1, Math.min(totalFrames1, Math.ceil(s1Bounded * totalFrames1)));
 
-            if (frameURLs1[frameIndex1]) {
-                imgElement1.src = frameURLs1[frameIndex1];
-                frameCounter1.innerText = `${frameIndex1} / ${totalFrames1}`;
-                percentCounter1.innerText = `${Math.round(s1Bounded * 100)}%`;
-            }
             updateOverlay(s1Bounded, overlay1, overlayTitle1, overlayDesc1);
 
             if (s1Bounded > 0.05) {
@@ -1311,16 +1253,14 @@
             }
         }
 
-        // Update Slider properties on second section dynamically
+        // Update Slider properties on second section
         function updateSecondSectionDOM() {
             const sec2 = window.secondSectionData || defaultSecondSectionData;
             const nextSection = document.getElementById("next-section");
             
-            // Background remains transparent as requested to let the forest video show
             nextSection.style.backgroundImage = "none";
             nextSection.style.backgroundColor = "transparent";
 
-            // Bind current slide properties cleanly with opacity transitions
             const slides = sec2.slides || [];
             if (slides.length > 0) {
                 if (currentSlideIndex >= slides.length) currentSlideIndex = 0;
@@ -1333,7 +1273,6 @@
                 const slideTitle = document.getElementById("slide-title");
                 const slideDesc = document.getElementById("slide-desc");
 
-                // Slide current clipart OUT based on transition direction
                 clipartImg.style.transition = "transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease";
                 if (slideDirection === "next") {
                     clipartImg.style.transform = "translateX(-150px) scale(0.95)";
@@ -1346,11 +1285,9 @@
                 slideDesc.style.opacity = "0";
 
                 setTimeout(() => {
-                    // RESOLVED: Captures background image from Firebase properties with robust fallbacks
                     const mainImgUrl = slide.bgImage || slide.image || slide.bg || sec2.bgImage || sec2.bg || defaultSecondSectionData.bgImage || "";
                     const clipartImgUrl = slide.clipart || "https://upload.wikimedia.org/wikipedia/commons/e/ec/Cartoon_bee.svg";
 
-                    // RESOLVED: Background images update without flashing/resetting if URL remains the same
                     if (slideMainImg) {
                         if (mainImgUrl) {
                             const cleanMainImgUrl = mainImgUrl.trim();
@@ -1364,7 +1301,6 @@
                                     slideMainImg.style.opacity = "1";
                                 }, 50);
                             } else {
-                                // Keeps background absolutely static and fixed if image hasn't changed
                                 slideMainImg.style.display = "block";
                                 slideMainImg.style.opacity = "1";
                             }
@@ -1374,10 +1310,7 @@
                         }
                     }
 
-                    // Handing the clipart image overlay sliding transitions
                     clipartImg.src = clipartImgUrl;
-
-                    // Position the incoming clipart on the opposite side instantly without transition
                     clipartImg.style.transition = "none";
                     if (slideDirection === "next") {
                         clipartImg.style.transform = "translateX(150px) scale(0.95)";
@@ -1386,10 +1319,8 @@
                     }
                     clipartImg.style.opacity = "0";
 
-                    // Force a DOM reflow
                     clipartImg.offsetHeight;
 
-                    // Slide/Fade clipart IN smoothly to center
                     clipartImg.style.transition = "transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease";
                     clipartImg.style.transform = "translateX(0) scale(1)";
                     clipartImg.style.opacity = "1";
@@ -1401,14 +1332,12 @@
                     slideDesc.style.opacity = "1";
                 }, 300);
 
-                // Re-render Slide indicators dynamically
                 const indicatorsContainer = document.getElementById("indicators-wrapper");
                 indicatorsContainer.innerHTML = "";
                 slides.forEach((_, idx) => {
                     const dot = document.createElement("div");
                     dot.className = `indicator-dot ${idx === currentSlideIndex ? 'active' : ''}`;
                     dot.onclick = () => {
-                        // Detect direction dynamically based on dot index comparisons
                         slideDirection = idx > currentSlideIndex ? "next" : "prev";
                         currentSlideIndex = idx;
                         updateSecondSectionDOM();
@@ -1418,7 +1347,6 @@
             }
         }
 
-        // Left / Right controls transitions
         function handlePrevSlide() {
             slideDirection = "prev";
             const sec2 = window.secondSectionData || defaultSecondSectionData;
@@ -1429,7 +1357,6 @@
             }
         }
 
-        // Handle Slide indicators
         function handleNextSlide() {
             slideDirection = "next";
             const sec2 = window.secondSectionData || defaultSecondSectionData;
@@ -1440,22 +1367,20 @@
             }
         }
 
-        // Top Bar Button Actions
         function handleLeftClick() {
             alert("Left action button clicked!");
         }
 
-        // Handle Right Click Actions
         function handleRightClick() {
             alert("Right action button clicked!");
         }
 
-        // Initialization: Run both loader tasks and tracking routines
-        loadAndExtractZip3(); // Load Section 1 assets (swapped to 192 frames ZIP)
-        loadAndExtractZip1(); // Load Section 3 assets (swapped to 240 frames ZIP) [1]
+        // Initialization
+        loadAndExtractZip3(); 
+        loadAndExtractZip1(); 
         initScrollListener();
         initCursorTracker();
-        loadBeeDirect(); // Swapped out ZIP extraction with highly efficient direct asset binding
+        loadBeeDirect(); 
     </script>
 </body>
 </html>
