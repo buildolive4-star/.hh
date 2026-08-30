@@ -129,11 +129,11 @@
         }
 
         #scroll-section-3 {
-            margin-top: 60px; /* SWAPPED: Now at top as Section 1, offsets for fixed Top Bar */
+            margin-top: 60px; /* Now at top as Section 1, offsets for fixed Top Bar */
         }
 
         #scroll-section-1 {
-            margin-top: 0px; /* SWAPPED: Now at bottom as Section 3 */
+            margin-top: 0px; /* Now at bottom as Section 3 */
         }
 
         /* Sticky Wrapper */
@@ -272,8 +272,27 @@
                 font-size: 15px;
             }
             #rocket-viewer {
-                width: 130px;
-                height: 130px;
+                width: 120px; /* Highly optimized smaller size for mobile screens */
+                height: 120px;
+            }
+            .next-section {
+                padding: 40px 10px; /* Cleaner padding to avoid cutoffs on tall phones */
+            }
+            .slider-container {
+                padding: 20px;
+                gap: 15px;
+            }
+            .desc-title {
+                font-size: 20px;
+                margin-bottom: 8px;
+            }
+            .desc-text {
+                font-size: 13px;
+                line-height: 1.5;
+            }
+            .slide-btn {
+                padding: 8px 16px;
+                font-size: 11px;
             }
         }
 
@@ -462,14 +481,6 @@
             box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(255, 255, 255, 0.08);
             position: relative;
             margin-top: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .slider-container {
-                padding: 20px;
-                gap: 20px;
-                width: 95%;
-            }
         }
 
         /* Clipart upper viewport (16:9 Aspect Ratio Card) */
@@ -973,6 +984,13 @@
                         const blob = await file.async("blob");
                         const objectURL = URL.createObjectURL(blob);
                         frameURLs3[i] = objectURL;
+
+                        // OPTIMIZATION: Decode images off the main thread to prevent scrolling drops/flickers [1]
+                        const imgObj = new Image();
+                        imgObj.src = objectURL;
+                        if (imgObj.decode) {
+                            imgObj.decode().catch(() => {});
+                        }
                     }
 
                     const percent = Math.round((i / totalFrames3) * 100);
@@ -1020,6 +1038,13 @@
                         const blob = await file.async("blob");
                         const objectURL = URL.createObjectURL(blob);
                         frameURLs1[i] = objectURL;
+
+                        // OPTIMIZATION: Decode images off the main thread to prevent scrolling drops/flickers [1]
+                        const imgObj = new Image();
+                        imgObj.src = objectURL;
+                        if (imgObj.decode) {
+                            imgObj.decode().catch(() => {});
+                        }
                     }
 
                     const percent = Math.round((i / totalFrames1) * 100);
@@ -1182,95 +1207,108 @@
             }
         }
 
-        // Unified scroll engine to handle timeline updates for both scroll sections
+        // OPTIMIZATION: Debounce scroll events using requestAnimationFrame (rAF) to prevent stutter on Mobile/Desktop
+        let scrollScheduled = false;
+
         function initScrollListener() {
+            // passive: true allows instant fluid page scrolls on touch screens [1]
             window.addEventListener('scroll', () => {
-                const scrollTop = window.scrollY || document.documentElement.scrollTop;
-                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-                
-                // 1. Overall global progress bar updates
-                const overallProgress = (scrollTop / docHeight) * 100;
-                progressBar.style.width = `${overallProgress}%`;
-
-                // Calculate wind velocity impact on target coordinates
-                const currentScrollY = window.scrollY;
-                scrollVelocity = currentScrollY - lastScrollY;
-                lastScrollY = currentScrollY;
-                targetY += scrollVelocity * 0.25;
-
-                // 2. Section 1 Timeline Updates (scroll-section-3, 192 frames, top of page)
-                const s3Top = scrollSection3.offsetTop;
-                const s3Height = scrollSection3.scrollHeight;
-                const s3Fraction = (scrollTop - s3Top) / (s3Height - window.innerHeight);
-                const s3Bounded = Math.max(0, Math.min(1, s3Fraction));
-                const frameIndex3 = Math.max(1, Math.min(totalFrames3, Math.ceil(s3Bounded * totalFrames3)));
-
-                if (frameURLs3[frameIndex3]) {
-                    imgElement3.src = frameURLs3[frameIndex3];
-                    frameCounter3.innerText = `${frameIndex3} / ${totalFrames3}`;
-                    percentCounter3.innerText = `${Math.round(s3Bounded * 100)}%`;
+                if (!scrollScheduled) {
+                    scrollScheduled = true;
+                    requestAnimationFrame(updateScrollPhysics);
                 }
-                updateOverlay(s3Bounded, overlay3, overlayTitle3, overlayDesc3);
+            }, { passive: true });
+        }
 
-                if (s3Bounded > 0.05) {
-                    statsColumn3.classList.add("hide-stats");
+        // Dedicated rendering pass aligned directly with screen refreshes (60Hz, 120Hz, etc.)
+        function updateScrollPhysics() {
+            scrollScheduled = false;
+
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            
+            // 1. Overall global progress bar updates
+            const overallProgress = (scrollTop / docHeight) * 100;
+            progressBar.style.width = `${overallProgress}%`;
+
+            // Calculate wind velocity impact on target coordinates
+            const currentScrollY = window.scrollY;
+            scrollVelocity = currentScrollY - lastScrollY;
+            lastScrollY = currentScrollY;
+            targetY += scrollVelocity * 0.25;
+
+            // 2. Section 1 Timeline Updates (scroll-section-3, 192 frames, top of page)
+            const s3Top = scrollSection3.offsetTop;
+            const s3Height = scrollSection3.scrollHeight;
+            const s3Fraction = (scrollTop - s3Top) / (s3Height - window.innerHeight);
+            const s3Bounded = Math.max(0, Math.min(1, s3Fraction));
+            const frameIndex3 = Math.max(1, Math.min(totalFrames3, Math.ceil(s3Bounded * totalFrames3)));
+
+            if (frameURLs3[frameIndex3]) {
+                imgElement3.src = frameURLs3[frameIndex3];
+                frameCounter3.innerText = `${frameIndex3} / ${totalFrames3}`;
+                percentCounter3.innerText = `${Math.round(s3Bounded * 100)}%`;
+            }
+            updateOverlay(s3Bounded, overlay3, overlayTitle3, overlayDesc3);
+
+            if (s3Bounded > 0.05) {
+                statsColumn3.classList.add("hide-stats");
+            } else {
+                statsColumn3.classList.remove("hide-stats");
+            }
+
+            // Smooth Rocket Controller (Controls rocket.glb inside Section 1)
+            const rocket = document.getElementById("rocket-viewer");
+            if (rocket) {
+                let xPercent = 50;
+                let yPixels = -200;
+                let rotateDeg = 0;
+
+                if (s3Bounded <= 0.50) {
+                    // Phase 1: From off-screen bottom to viewport center vertically
+                    const p1 = s3Bounded / 0.50;
+                    yPixels = -200 + p1 * (window.innerHeight * 0.5 + 200);
+                    xPercent = 50;
+                    rotateDeg = 0;
+                } else if (s3Bounded <= 0.65) {
+                    // Phase 2: Gracefully tilt 90 degrees pointing to the right
+                    const pRot = (s3Bounded - 0.50) / 0.15;
+                    yPixels = window.innerHeight * 0.5;
+                    xPercent = 50;
+                    rotateDeg = pRot * 90;
                 } else {
-                    statsColumn3.classList.remove("hide-stats");
+                    // Phase 3: Fly from Left to Right off-screen
+                    const p2 = (s3Bounded - 0.65) / 0.35;
+                    yPixels = window.innerHeight * 0.5;
+                    xPercent = 50 + p2 * 75; // Extends smoothly up to 125%
+                    rotateDeg = 90;
                 }
 
-                // Smooth Rocket Controller (Controls rocket.glb inside Section 1)
-                const rocket = document.getElementById("rocket-viewer");
-                if (rocket) {
-                    let xPercent = 50;
-                    let yPixels = -200;
-                    let rotateDeg = 0;
+                // Applying computed coordinates with hardware rendering transitions
+                rocket.style.bottom = `${yPixels}px`;
+                rocket.style.left = `${xPercent}%`;
+                rocket.style.transform = `translate(-50%, 50%) rotate(${rotateDeg}deg)`;
+            }
 
-                    if (s3Bounded <= 0.50) {
-                        // Phase 1: From off-screen bottom to viewport center vertically
-                        const p1 = s3Bounded / 0.50;
-                        yPixels = -200 + p1 * (window.innerHeight * 0.5 + 200);
-                        xPercent = 50;
-                        rotateDeg = 0;
-                    } else if (s3Bounded <= 0.65) {
-                        // Phase 2: Gracefully tilt 90 degrees pointing to the right
-                        const pRot = (s3Bounded - 0.50) / 0.15;
-                        yPixels = window.innerHeight * 0.5;
-                        xPercent = 50;
-                        rotateDeg = pRot * 90;
-                    } else {
-                        // Phase 3: Fly from Left to Right off-screen
-                        const p2 = (s3Bounded - 0.65) / 0.35;
-                        yPixels = window.innerHeight * 0.5;
-                        xPercent = 50 + p2 * 75; // Extends smoothly up to 125%
-                        rotateDeg = 90;
-                    }
+            // 3. Section 3 Timeline Updates (scroll-section-1, 240 frames, bottom of page) [1]
+            const s1Top = scrollSection1.offsetTop;
+            const s1Height = scrollSection1.scrollHeight;
+            const s1Fraction = (scrollTop - s1Top) / (s1Height - window.innerHeight);
+            const s1Bounded = Math.max(0, Math.min(1, s1Fraction));
+            const frameIndex1 = Math.max(1, Math.min(totalFrames1, Math.ceil(s1Bounded * totalFrames1)));
 
-                    // Applying computed coordinates with hardware rendering transitions
-                    rocket.style.bottom = `${yPixels}px`;
-                    rocket.style.left = `${xPercent}%`;
-                    rocket.style.transform = `translate(-50%, 50%) rotate(${rotateDeg}deg)`;
-                }
+            if (frameURLs1[frameIndex1]) {
+                imgElement1.src = frameURLs1[frameIndex1];
+                frameCounter1.innerText = `${frameIndex1} / ${totalFrames1}`;
+                percentCounter1.innerText = `${Math.round(s1Bounded * 100)}%`;
+            }
+            updateOverlay(s1Bounded, overlay1, overlayTitle1, overlayDesc1);
 
-                // 3. Section 3 Timeline Updates (scroll-section-1, 240 frames, bottom of page) [1]
-                const s1Top = scrollSection1.offsetTop;
-                const s1Height = scrollSection1.scrollHeight;
-                const s1Fraction = (scrollTop - s1Top) / (s1Height - window.innerHeight);
-                const s1Bounded = Math.max(0, Math.min(1, s1Fraction));
-                const frameIndex1 = Math.max(1, Math.min(totalFrames1, Math.ceil(s1Bounded * totalFrames1)));
-
-                if (frameURLs1[frameIndex1]) {
-                    imgElement1.src = frameURLs1[frameIndex1];
-                    frameCounter1.innerText = `${frameIndex1} / ${totalFrames1}`;
-                    percentCounter1.innerText = `${Math.round(s1Bounded * 100)}%`;
-                }
-                updateOverlay(s1Bounded, overlay1, overlayTitle1, overlayDesc1);
-
-                if (s1Bounded > 0.05) {
-                    statsColumn1.classList.add("hide-stats");
-                } else {
-                    statsColumn1.classList.remove("hide-stats");
-                }
-            });
+            if (s1Bounded > 0.05) {
+                statsColumn1.classList.add("hide-stats");
+            } else {
+                statsColumn1.classList.remove("hide-stats");
+            }
         }
 
         // Update Slider properties on second section dynamically
