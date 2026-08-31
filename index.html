@@ -868,55 +868,128 @@
             transform: translateY(-2px);
         }
 
-        /* SECTION 5: High-Fidelity Responsive 3D Clean Fox Zone */
-        .footer-spacer {
-            min-height: 100vh; 
-            background: radial-gradient(circle at center, #09091a 0%, #030308 100%);
+        /* ========================================================================= */
+        /* SECTION 5: NEW Transparent Section (Hanging Box & Animated Stickers)      */
+        /* ========================================================================= */
+        .transparent-slider-section {
+            min-height: 100vh;
+            position: relative;
+            background: transparent; /* Shows background cleanly */
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-end;
             align-items: center;
-            border-top: 1px solid rgba(0, 242, 254, 0.15);
-            position: relative;
-            z-index: 10;
             overflow: hidden;
-            padding: 40px 20px;
+            padding-bottom: 40px;
+            z-index: 10;
         }
 
-        .footer-content {
-            color: #72729a;
-            font-size: clamp(9px, 2.5vw, 12px);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 500;
-            text-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+        /* Right Lower Corner Grass Sticker */
+        .grass-sticker {
+            position: absolute;
+            bottom: -5px;
+            right: -10px;
+            max-width: 50vw;
+            max-height: 50vh;
+            z-index: 20; /* Keeps grass strictly in front of the animated sticker */
+            pointer-events: none; /* Let clicks pass through if needed */
+        }
+
+        /* Dynamic Admin Sticker sliding in from the right */
+        .admin-sticker-master {
+            position: absolute;
+            bottom: 30px;
+            right: 8vw; /* Placed exactly so grass covers it dynamically */
+            z-index: 15; /* Behind the grass */
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .admin-sticker-master.hidden {
+            transform: translateX(120vw); /* Flies out to the right */
+        }
+
+        .admin-dynamic-sticker {
+            max-height: 55vh;
+            max-width: 50vw;
+            object-fit: contain;
+            filter: drop-shadow(0 0 25px rgba(0, 242, 254, 0.4));
+        }
+
+        /* Upper Left Hanging 3D Glassmorphic Box */
+        .hanging-master {
+            position: absolute;
+            top: 0;
+            left: 10%;
+            z-index: 25;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .hanging-master.hidden {
+            transform: translateY(-150%); /* Pulled up entirely out of view */
+        }
+
+        /* Gentle 3D continuous swinging */
+        @keyframes swing3D {
+            0% { transform: perspective(800px) rotateX(2deg) rotateY(-2deg) rotateZ(1deg); }
+            50% { transform: perspective(800px) rotateX(-2deg) rotateY(2deg) rotateZ(-1deg); }
+            100% { transform: perspective(800px) rotateX(2deg) rotateY(-2deg) rotateZ(1deg); }
+        }
+
+        .hanging-box-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform-origin: top center;
+            animation: swing3D 6s ease-in-out infinite;
+        }
+
+        .thread {
+            width: 2px;
+            height: clamp(60px, 15vh, 120px);
+            background: linear-gradient(to bottom, #72729a, #00f2fe);
+            box-shadow: 0 0 10px #00f2fe;
+        }
+
+        .hanging-content {
+            background: rgba(10, 10, 25, 0.55);
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            border-radius: 16px;
+            padding: 25px;
+            max-width: clamp(280px, 40vw, 400px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: #ffffff;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,242,254,0.15);
+            font-size: clamp(13px, 3.5vw, 16px);
+            line-height: 1.6;
             text-align: center;
-            margin-top: 25px;
-            z-index: 15;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
         }
 
-        #fox-viewer {
-            width: 100%;
-            max-width: 1100px;
-            height: 70vh; 
-            margin: 0 auto;
+        /* Centered Next Button */
+        .next-btn-section5 {
             position: relative;
-            border-radius: 24px;
-            border: 2px solid rgba(0, 242, 254, 0.25);
-            background: radial-gradient(circle, #090920 0%, #030308 100%);
-            box-shadow: 0 0 40px rgba(0, 242, 254, 0.2), inset 0 0 30px rgba(0, 242, 254, 0.1);
-            z-index: 12;
-            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.8s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.8s ease;
+            z-index: 25;
+            background: rgba(0, 242, 254, 0.1);
+            border: 2px solid #00f2fe;
+            color: #00f2fe;
+            padding: 14px 45px;
+            border-radius: 40px;
+            font-weight: 800;
+            font-size: clamp(12px, 3vw, 15px);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+            margin-bottom: 20px;
         }
 
-        #fox-viewer:hover {
-            transform: scale(1.02);
-            border-color: #00f2fe;
-            box-shadow: 0 0 60px rgba(0, 242, 254, 0.5), inset 0 0 50px rgba(0, 242, 254, 0.3);
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .next-btn-section5:hover {
+            background: #00f2fe;
+            color: #04040a;
+            box-shadow: 0 0 35px rgba(0, 242, 254, 0.8);
+            transform: translateY(-3px) scale(1.05);
         }
 
         /* Responsive Media Queries for Mobile/Tablet Optimization */
@@ -968,8 +1041,16 @@
                 padding: 10px 15px;
                 font-size: 10px;
             }
-            #fox-viewer {
-                height: 55vh; 
+            
+            /* Section 5 responsive adjustments */
+            .hanging-master {
+                left: 5%;
+            }
+            .grass-sticker {
+                max-width: 70vw;
+            }
+            .admin-dynamic-sticker {
+                max-width: 65vw;
             }
         }
     </style>
@@ -1161,7 +1242,7 @@
             <p>Pinch to zoom Spiderman, and swipe left/right to explore cards</p>
         </div>
 
-        <!-- Rigged 3D Playable Spiderman (Starts very small, zoomable with two fingers) -->
+        <!-- Rigged 3D Playable Spiderman (Smooth and Lazy Loaded configuration) -->
         <div class="spiderman-play-area">
             <model-viewer 
                 src="spiderman.glb" 
@@ -1173,7 +1254,9 @@
                 exposure="1.2"
                 camera-orbit="0deg 75deg 15m" 
                 min-camera-orbit="auto auto 1m" 
-                max-camera-orbit="auto auto 25m">
+                max-camera-orbit="auto auto 25m"
+                loading="lazy"
+                interaction-prompt="none">
             </model-viewer>
         </div>
         
@@ -1190,33 +1273,31 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- SECTION 5: High-Fidelity Responsive 3D Clean Fox Showcase Zone -->
+    <!-- SECTION 5: NEW Transparent Section (Hanging Box & Animated Stickers)      -->
     <!-- ========================================================================= -->
-    <div class="footer-spacer">
-        <div class="fox-title-wrapper" style="text-align: center; margin-bottom: 25px; z-index: 15;">
-            <h2 style="font-size: clamp(24px, 6vw, 48px); font-weight: 800; color: #00f2fe; text-transform: uppercase; letter-spacing: 3px; margin: 0; text-shadow: 0 0 20px rgba(0, 242, 254, 0.6);">Guardian Fox 3D</h2>
-            <p style="color: #72729a; font-size: clamp(12px, 3vw, 16px); letter-spacing: 1px; margin-top: 5px;">High performance native 3D file rendering</p>
+    <div class="transparent-slider-section">
+
+        <!-- Fixed Grass Sticker (Right lower corner) -->
+        <img class="grass-sticker" src="https://i.ibb.co/wF2j7q2C/1000636933-removebg-preview.png" alt="Grass Overlay">
+
+        <!-- Upper Left Box Hanging by Thread -->
+        <div class="hanging-master" id="hanging-master">
+            <div class="hanging-box-wrapper">
+                <div class="thread"></div>
+                <div class="hanging-content" id="hanging-desc">
+                    Initializing sequence content dynamically...
+                </div>
+            </div>
         </div>
 
-        <!-- Crisp Studio-Lit 3D Fox Viewer (Auto-rotate & Auto-play Enabled) -->
-        <model-viewer 
-            id="fox-viewer"
-            src="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Fox/glTF-Binary/Fox.glb"
-            alt="3D Animated Fox Model" 
-            auto-rotate 
-            autoplay
-            camera-controls
-            shadow-intensity="1.5"
-            exposure="1.2"
-            environment-image="neutral"
-            shadow-softness="0.6"
-            interaction-prompt="none"
-            loading="lazy">
-        </model-viewer>
-
-        <div class="footer-content">
-            <p>End of Cinematic Showcase • Designed for smooth transitions</p>
+        <!-- Dynamic Admin Sticker (Appears from Right side, behind grass) -->
+        <div class="admin-sticker-master" id="admin-sticker-master">
+            <img id="admin-dynamic-sticker" class="admin-dynamic-sticker" src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Cartoon_bee.svg" alt="Admin Generated Sticker">
         </div>
+
+        <!-- Center Next Button triggering seamless animation transition -->
+        <button class="next-btn-section5" onclick="nextSection5Item()">Next Configuration</button>
+
     </div>
 
     <!-- Firebase Web SDK Integration Modules -->
@@ -1274,6 +1355,16 @@
             if (track) track.innerHTML = "";
             window.loadMoreProjects();
         });
+
+        // Fetch New Section 5 Data (Stickers and Descriptions)
+        const section5Ref = ref(db, 'fanzoen_settings/section5');
+        onValue(section5Ref, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                window.section5Data = Array.isArray(data) ? data : Object.values(data);
+                window.initSection5();
+            }
+        });
     </script>
 
     <script>
@@ -1317,6 +1408,57 @@
         window.allProjects = [];
         window.currentShownProjects = 0;
         const PROJECTS_PER_LOAD = 10; // Exactly 10 as per rules
+
+        // -------------------------------------------------------------
+        // NEW SECTION 5: Default Data & Logic Initialization
+        // -------------------------------------------------------------
+        const defaultSection5Data = [
+            {
+                sticker: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Cartoon_bee.svg",
+                desc: "Welcome to the magical transparent slider! This description and the bee sticker are entirely controlled through the Admin panel data structure."
+            },
+            {
+                sticker: "https://i.ibb.co/DDpy6KwS/1000636620-removebg-preview.png",
+                desc: "Notice how seamlessly the sticker flies back to the right and the thread box pulls up, replacing content with no hard cuts!"
+            }
+        ];
+        
+        window.section5Data = defaultSection5Data;
+        window.sec5CurrentIndex = 0;
+
+        window.initSection5 = function() {
+            if (!window.section5Data || window.section5Data.length === 0) return;
+            const currentData = window.section5Data[window.sec5CurrentIndex];
+            document.getElementById('hanging-desc').innerText = currentData.desc || "No Description Configured";
+            document.getElementById('admin-dynamic-sticker').src = currentData.sticker || "";
+        };
+
+        // Bound to the "Next Configuration" button
+        window.nextSection5Item = function() {
+            if (!window.section5Data || window.section5Data.length === 0) return;
+            
+            const masterBox = document.getElementById('hanging-master');
+            const masterSticker = document.getElementById('admin-sticker-master');
+            
+            // 1. Move both elements beautifully out of viewport
+            masterBox.classList.add('hidden');
+            masterSticker.classList.add('hidden');
+            
+            // 2. Wait for exactly the CSS transition time (800ms) to update and slide back in
+            setTimeout(() => {
+                window.sec5CurrentIndex = (window.sec5CurrentIndex + 1) % window.section5Data.length;
+                const currentData = window.section5Data[window.sec5CurrentIndex];
+                
+                // Swap data silently while hidden
+                document.getElementById('hanging-desc').innerText = currentData.desc || "No Description";
+                document.getElementById('admin-dynamic-sticker').src = currentData.sticker || "";
+                
+                // Pop back into the scene
+                masterBox.classList.remove('hidden');
+                masterSticker.classList.remove('hidden');
+            }, 800);
+        };
+        // -------------------------------------------------------------
 
         // Sequence 3 Specifications (Section 1)
         const totalFrames3 = 192;
@@ -1852,6 +1994,7 @@
         };
 
         // Initialization Pipeline execution
+        window.initSection5(); // Bootstraps initial section 5 data
         loadAndExtractZip3(); 
         initScrollListener();
         initCursorTracker();
