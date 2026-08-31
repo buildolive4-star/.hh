@@ -221,7 +221,7 @@
             justify-content: center;
             align-items: center;
             z-index: 1100;
-            pointer-events: auto; /* Active so that the button inside can be clicked */
+            pointer-events: auto; 
             opacity: 0;
             will-change: transform, opacity;
             /* EXTREMELY SMOOTH cinematic transition (Expo Out) for perfect pop-out effect */
@@ -260,33 +260,41 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(4, 4, 10, 0.4);
-            border: 2px solid rgba(0, 242, 254, 0.7);
+            background: rgba(4, 4, 10, 0.7);
+            border: 2px solid rgba(0, 242, 254, 0.9);
             color: #00f2fe;
-            padding: 14px 28px;
+            padding: 16px 32px;
             border-radius: 40px;
-            font-size: clamp(13px, 3.5vw, 17px);
-            font-weight: 700;
+            font-size: clamp(14px, 4vw, 19px);
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 2px;
             text-decoration: none;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
-            /* Upgraded smooth interactions */
-            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.8s ease;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.4);
             z-index: 1200;
             pointer-events: auto;
-            opacity: 0;
             white-space: nowrap;
+            /* Initially hidden. Delayed fade-in so it waits for flower to open */
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        /* This rule guarantees the button appears ONLY when the flower has fully opened */
+        .flower-container.opened .choose-us-btn {
+            opacity: 1;
+            visibility: visible;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1) 0.6s; /* 0.6s delay lets the flower bloom first */
         }
 
         .choose-us-btn:hover {
             background: #00f2fe;
             color: #04040a;
-            box-shadow: 0 0 40px rgba(0, 242, 254, 0.8);
+            box-shadow: 0 0 50px rgba(0, 242, 254, 0.9);
             border-color: #00f2fe;
-            transform: translate(-50%, -50%) scale(1.05); /* Soft pop on hover */
+            transform: translate(-50%, -50%) scale(1.1); /* Cinematic pop on hover */
         }
 
         /* Dynamic pulsing flower glow */
@@ -466,7 +474,7 @@
             color: #72729a;
         }
 
-        /* 2. Transparent Advanced Next Section */
+        /* 2. Transparent Advanced Next Section (Benefit of our service) */
         .next-section {
             min-height: 100vh;
             position: relative;
@@ -491,6 +499,18 @@
             background: rgba(4, 4, 10, 0.55); 
             z-index: -1;
         }
+        
+        .section-title-overlay {
+            position: relative;
+            z-index: 15;
+            font-size: clamp(28px, 6vw, 48px);
+            font-weight: 800;
+            color: #00f2fe;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 25px rgba(0, 242, 254, 0.6);
+        }
 
         /* Dynamic Clipart Slider Structure with Glassmorphism */
         .slider-container {
@@ -509,7 +529,6 @@
             -webkit-backdrop-filter: blur(15px);
             box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(255, 255, 255, 0.08);
             position: relative;
-            margin-top: 20px;
             transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
@@ -676,7 +695,7 @@
         }
 
         /* ========================================================================= */
-        /* SECTION 4: Our Projects & Dynamic Playable Spiderman */
+        /* SECTION 4: Our Service (Projects) & Dynamic Playable Spiderman            */
         /* ========================================================================= */
         .projects-section {
             min-height: 100vh;
@@ -1053,6 +1072,220 @@
                 max-width: 65vw;
             }
         }
+
+        /* ========================================================================= */
+        /* SECTION 6: Pricing and Detailing                                          */
+        /* ========================================================================= */
+        .pricing-section {
+            min-height: 100vh;
+            position: relative;
+            padding: 80px 20px;
+            background: rgba(4, 4, 10, 0.8);
+            border-top: 1px solid rgba(0, 242, 254, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .pricing-title-wrapper {
+            text-align: center;
+            margin-bottom: 50px;
+            z-index: 15;
+            position: relative;
+        }
+
+        .pricing-title-wrapper h2 {
+            font-size: clamp(28px, 6vw, 48px);
+            font-weight: 800;
+            color: #00f2fe;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin: 0;
+            text-shadow: 0 0 25px rgba(0, 242, 254, 0.6);
+        }
+
+        .pricing-category {
+            width: 100%;
+            max-width: 1300px;
+            margin-bottom: 40px;
+            z-index: 15;
+        }
+
+        .category-title {
+            font-size: clamp(20px, 4vw, 28px);
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            padding-left: 10px;
+            border-left: 4px solid #00f2fe;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+        }
+
+        .pricing-track {
+            display: flex;
+            gap: 25px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: 10px 5px 30px 5px;
+            scrollbar-width: thin;
+            scrollbar-color: #00f2fe rgba(255,255,255,0.05);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .pricing-track::-webkit-scrollbar {
+            height: 8px;
+        }
+        .pricing-track::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .pricing-track::-webkit-scrollbar-thumb {
+            background: #00f2fe;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+        }
+
+        .pricing-track a {
+            flex: 0 0 clamp(280px, 60vw, 400px);
+            scroll-snap-align: center;
+            display: block;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.5s ease;
+            background: rgba(15, 15, 30, 0.5);
+            text-decoration: none;
+        }
+
+        .pricing-track a:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 242, 254, 0.35);
+            border-color: #00f2fe;
+        }
+
+        .pricing-track a img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* ========================================================================= */
+        /* SECTION 7: Blackhole Transition                                           */
+        /* ========================================================================= */
+        .blackhole-section {
+            min-height: 100vh;
+            position: relative;
+            background: #020205;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            z-index: 10;
+            border-top: 1px solid rgba(0, 242, 254, 0.15);
+        }
+
+        .blackhole-container {
+            position: relative;
+            width: clamp(300px, 50vw, 500px);
+            height: clamp(300px, 50vw, 500px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .blackhole-core {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            background: #000;
+            border-radius: 50%;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 1), 0 0 100px rgba(0, 0, 0, 1);
+            z-index: 5;
+        }
+
+        .blackhole-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: rgba(0, 242, 254, 0.8);
+            border-bottom-color: rgba(79, 172, 254, 0.8);
+            box-shadow: 0 0 60px rgba(0, 242, 254, 0.5), inset 0 0 60px rgba(79, 172, 254, 0.3);
+            animation: rotateBlackhole 4s linear infinite;
+            z-index: 4;
+            filter: blur(2px);
+        }
+        
+        .blackhole-ring::before {
+            content: '';
+            position: absolute;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-left-color: rgba(0, 242, 254, 0.6);
+            border-right-color: rgba(79, 172, 254, 0.6);
+            animation: rotateBlackholeReverse 6s linear infinite;
+        }
+
+        .blackhole-particles {
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.1) 0%, transparent 60%);
+            animation: pulseBlackhole 3s ease-in-out infinite;
+            z-index: 3;
+        }
+
+        .blackhole-btn {
+            position: relative;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #00f2fe;
+            color: #00f2fe;
+            padding: 16px 40px;
+            border-radius: 40px;
+            font-size: clamp(14px, 3.5vw, 18px);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.5), inset 0 0 15px rgba(0, 242, 254, 0.2);
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .blackhole-btn:hover {
+            background: #00f2fe;
+            color: #020205;
+            box-shadow: 0 0 60px rgba(0, 242, 254, 0.9);
+            transform: scale(1.1);
+        }
+
+        @keyframes rotateBlackhole {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.05); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        
+        @keyframes rotateBlackholeReverse {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        @keyframes pulseBlackhole {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
     </style>
 </head>
 <body>
@@ -1154,9 +1387,10 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- SECTION 2: Dynamic Clipart Slider (Middle Section) -->
+    <!-- SECTION 2: Dynamic Clipart Slider (Benefit of our service)                -->
     <!-- ========================================================================= -->
     <div class="next-section" id="next-section">
+        <div class="section-title-overlay">Benefit of our service</div>
         <div class="slider-container">
             <!-- Upper Clipart Image Container (Strict 16:9 Aspect Ratio) -->
             <div class="clipart-box">
@@ -1183,7 +1417,7 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- SECTION 3: Auto-playing Video Sequence (Cloudinary Video Embed - Instant Load) -->
+    <!-- SECTION 3: Why Choose Us (Cloudinary Video Embed with Blooming Flower)    -->
     <!-- ========================================================================= -->
     <div class="scroll-container" id="scroll-section-1">
         <div class="sticky-wrapper">
@@ -1200,16 +1434,17 @@
                 </iframe>
             </div>
 
-            <!-- Beautiful Floating Flower Element (Zoom & Auto Spin with Choose Us Link) -->
+            <!-- Beautiful Floating Flower Element (Zoom & Auto Spin with Why Choose Us Link) -->
             <div id="flower-container" class="flower-container">
                 <img id="flower-img" src="https://i.ibb.co/DDpy6KwS/1000636620-removebg-preview.png" alt="Glowing Flower Element">
-                <!-- Why Choose Us button added cleanly inside the flower container -->
+                
+                <!-- Why Choose Us button: Fades in seamlessly after the flower is completely opened -->
                 <a href="s.html" class="choose-us-btn" id="choose-us-btn">Why Choose Us</a>
             </div>
 
             <!-- Dynamic Info Card Overlay (Hided in CSS to keep section clean) -->
             <div class="scroll-text-overlay" id="scroll-text-overlay-1">
-                <div class="scroll-text-title" id="scroll-text-title-1">Loading...</div>
+                <div class="scroll-text-title" id="scroll-text-title-1">Why Choose Us</div>
                 <div class="scroll-text-desc" id="scroll-text-desc-1">Initializing Database connection.</div>
             </div>
 
@@ -1233,12 +1468,13 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- SECTION 4: Our Projects (Firebase Connected, Swipe Carousel + Playable Spiderman) -->
+    <!-- SECTION 4: Our Service (Firebase Connected, Swipe Carousel + Spiderman)   -->
     <!-- ========================================================================= -->
     <div class="projects-section" id="projects-section">
         
         <div class="projects-title-wrapper">
-            <h2>Our Projects</h2>
+            <!-- Title changed smoothly here -->
+            <h2>Our Service</h2>
             <p>Pinch to zoom Spiderman, and swipe left/right to explore cards</p>
         </div>
 
@@ -1267,13 +1503,13 @@
             </div>
         </div>
         
-        <!-- Load More Button -->
-        <button id="load-more-btn" class="load-more-btn" onclick="loadMoreProjects()" style="display: none;">Load More Projects</button>
+        <!-- Load More Button text updated -->
+        <button id="load-more-btn" class="load-more-btn" onclick="loadMoreProjects()" style="display: none;">Load More Services</button>
         
     </div>
 
     <!-- ========================================================================= -->
-    <!-- SECTION 5: NEW Transparent Section (Hanging Box & Animated Stickers)      -->
+    <!-- SECTION 5: Transparent Section (Hanging Box & Animated Stickers)          -->
     <!-- ========================================================================= -->
     <div class="transparent-slider-section">
 
@@ -1298,6 +1534,78 @@
         <!-- Center Next Button triggering seamless animation transition -->
         <button class="next-btn-section5" onclick="nextSection5Item()">Next Configuration</button>
 
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 6: Pricing and Detailing                                          -->
+    <!-- ========================================================================= -->
+    <div class="pricing-section" id="pricing-section">
+        <div class="pricing-title-wrapper">
+            <h2>Pricing & Detailing</h2>
+            <p>Explore our tailored plans and services across various categories.</p>
+        </div>
+
+        <!-- Category 1: Website Pricing -->
+        <div class="pricing-category">
+            <h3 class="category-title">Website Pricing</h3>
+            <div class="pricing-track">
+                <a href="https://ibb.co/rKWH9vjH" target="_blank"><img src="https://i.ibb.co/hxqV0C6V/1000636986.png" alt="1000636986" border="0"></a>
+                <a href="https://ibb.co/3yjdnQZH" target="_blank"><img src="https://i.ibb.co/BVQ39FMR/1000636998.png" alt="1000636998" border="0"></a>
+                <a href="https://ibb.co/n8Bjb0cK" target="_blank"><img src="https://i.ibb.co/Tq1tkT8N/1000636999.png" alt="1000636999" border="0"></a>
+                <a href="https://ibb.co/LDJp3RT1" target="_blank"><img src="https://i.ibb.co/8nd8Hsy9/1000637001.png" alt="1000637001" border="0"></a>
+                <a href="https://ibb.co/LDJp3RT1" target="_blank"><img src="https://i.ibb.co/8nd8Hsy9/1000637001.png" alt="1000637001" border="0"></a>
+            </div>
+        </div>
+
+        <!-- Category 2: Digital Marketing -->
+        <div class="pricing-category">
+            <h3 class="category-title">Digital Marketing</h3>
+            <div class="pricing-track">
+                <a href="https://ibb.co/DHcwyWmQ" target="_blank"><img src="https://i.ibb.co/9kKyLgBW/1000637002.png" alt="1000637002" border="0"></a>
+                <a href="https://ibb.co/PzTd5Hsw" target="_blank"><img src="https://i.ibb.co/R4hqCwGz/1000637003.png" alt="1000637003" border="0"></a>
+                <a href="https://ibb.co/rGvtc6dz" target="_blank"><img src="https://i.ibb.co/gM67PT4f/1000637004.png" alt="1000637004" border="0"></a>
+            </div>
+        </div>
+        
+        <!-- Category 3: Influencer Marketing -->
+        <div class="pricing-category">
+            <h3 class="category-title">Influencer Marketing</h3>
+            <div class="pricing-track">
+                <a href="https://ibb.co/3yCvbxpq" target="_blank"><img src="https://i.ibb.co/VWqxGFgZ/1000637005.png" alt="1000637005" border="0"></a>
+                <a href="https://ibb.co/5gxwySLp" target="_blank"><img src="https://i.ibb.co/LXhHWc1j/1000637006.png" alt="1000637006" border="0"></a>
+                <a href="https://ibb.co/Xk2QpV5D" target="_blank"><img src="https://i.ibb.co/qFyS9xgC/1000637008.png" alt="1000637008" border="0"></a>
+            </div>
+        </div>
+
+        <!-- Category 4: BPO Services -->
+        <div class="pricing-category">
+            <h3 class="category-title">BPO Services</h3>
+            <div class="pricing-track">
+                <a href="https://ibb.co/W4tKj8HN" target="_blank"><img src="https://i.ibb.co/B5NsFWfH/1000637016.png" alt="1000637016" border="0"></a>
+                <a href="https://ibb.co/Z6LmZp1j" target="_blank"><img src="https://i.ibb.co/6RnBd7JM/1000637017.png" alt="1000637017" border="0"></a>
+                <a href="https://ibb.co/dJpVPXry" target="_blank"><img src="https://i.ibb.co/vvdT3fH8/1000637018.png" alt="1000637018" border="0"></a>
+            </div>
+        </div>
+
+        <!-- Category 5: AI Automation -->
+        <div class="pricing-category">
+            <h3 class="category-title">AI Automation</h3>
+            <div class="pricing-track">
+                <a href="https://ibb.co/nMXQhs23" target="_blank"><img src="https://i.ibb.co/F4Q8Gbvs/1000637019.png" alt="1000637019" border="0"></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 7: Blackhole Transition                                           -->
+    <!-- ========================================================================= -->
+    <div class="blackhole-section" id="blackhole-section">
+        <div class="blackhole-container">
+            <div class="blackhole-ring"></div>
+            <div class="blackhole-core"></div>
+            <div class="blackhole-particles"></div>
+            <a href="New.html" class="blackhole-btn">New Page</a>
+        </div>
     </div>
 
     <!-- Firebase Web SDK Integration Modules -->
@@ -1325,7 +1633,6 @@
             const data = snapshot.val();
             if (data) {
                 window.scrollTexts = Array.isArray(data) ? data : Object.values(data);
-                console.log("Firebase Scroll Texts Configured:", window.scrollTexts);
             }
         });
 
@@ -1335,12 +1642,11 @@
             const data = snapshot.val();
             if (data) {
                 window.secondSectionData = data;
-                console.log("Firebase Slider Configured:", window.secondSectionData);
                 updateSecondSectionDOM();
             }
         });
 
-        // Fetch Section 4 Projects Data automatically from Admin panel uploads
+        // Fetch Section 4 Services (Projects) Data
         const projectsRef = ref(db, 'fanzoen_settings/projects');
         onValue(projectsRef, (snapshot) => {
             const data = snapshot.val();
@@ -1356,7 +1662,7 @@
             window.loadMoreProjects();
         });
 
-        // Fetch New Section 5 Data (Stickers and Descriptions)
+        // Fetch Section 5 Data (Stickers and Descriptions)
         const section5Ref = ref(db, 'fanzoen_settings/section5');
         onValue(section5Ref, (snapshot) => {
             const data = snapshot.val();
@@ -1385,12 +1691,13 @@
             }
         ];
 
+        // 2nd Section defaults renamed to Benefit of our service
         const defaultSecondSectionData = {
             bgImage: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1950&q=80",
             slides: [
                 {
                     clipart: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Cartoon_bee.svg",
-                    title: "Forest Canopy Showcase",
+                    title: "Benefit of our service",
                     desc: "This dynamic title and content can be updated in real-time from the Firebase Admin Panel. Explore different slides with rich descriptions and clip art assets."
                 },
                 {
@@ -1410,7 +1717,7 @@
         const PROJECTS_PER_LOAD = 10; // Exactly 10 as per rules
 
         // -------------------------------------------------------------
-        // NEW SECTION 5: Default Data & Logic Initialization
+        // SECTION 5: Transparent Section Defaults & Logic
         // -------------------------------------------------------------
         const defaultSection5Data = [
             {
@@ -1812,6 +2119,8 @@
                 flower.style.opacity = opacity;
                 if (opacity > 0.1) {
                     flower.style.pointerEvents = "auto";
+                    
+                    // Critical Update: Adding .opened triggers the "Why Choose Us" button's fade-in via CSS
                     flower.classList.add("opened"); 
                 } else {
                     flower.style.pointerEvents = "none";
