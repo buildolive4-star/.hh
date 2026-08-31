@@ -289,11 +289,6 @@
             transform: translate(-50%, -50%) scale(1.05); /* Soft pop on hover */
         }
 
-        /* Make button visible only when the flower is opened */
-        .flower-container.opened .choose-us-btn {
-            opacity: 1;
-        }
-
         /* Dynamic pulsing flower glow */
         @keyframes flowerGlow {
             0% {
@@ -680,7 +675,200 @@
             transform-origin: center;
         }
 
-        /* SECTION 4: High-Fidelity Responsive 3D Clean Fox Zone */
+        /* ========================================================================= */
+        /* SECTION 4: Our Projects & Dynamic Playable Spiderman */
+        /* ========================================================================= */
+        .projects-section {
+            min-height: 100vh;
+            position: relative;
+            padding: 80px 20px;
+            background: radial-gradient(circle at top, #09091a 0%, #04040a 100%);
+            border-top: 1px solid rgba(0, 242, 254, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+            overflow: hidden;
+        }
+        
+        .projects-title-wrapper {
+            text-align: center; 
+            margin-bottom: 25px; 
+            z-index: 15;
+            position: relative;
+        }
+
+        .projects-title-wrapper h2 {
+            font-size: clamp(28px, 6vw, 48px); 
+            font-weight: 800; 
+            color: #00f2fe; 
+            text-transform: uppercase; 
+            letter-spacing: 3px; 
+            margin: 0; 
+            text-shadow: 0 0 25px rgba(0, 242, 254, 0.6);
+        }
+
+        .projects-title-wrapper p {
+            color: #72729a; 
+            font-size: clamp(12px, 3vw, 16px); 
+            letter-spacing: 1px; 
+            margin-top: 8px;
+        }
+
+        /* Highly Visible & Playable Spiderman Play Area (Above Projects) */
+        .spiderman-play-area {
+            width: 100%;
+            height: 45vh; /* Massive play area for the character */
+            max-height: 450px;
+            position: relative;
+            z-index: 20; /* Keep it on top */
+            margin-bottom: 25px;
+            border-radius: 16px;
+            background: radial-gradient(circle at center, rgba(0,242,254,0.05) 0%, transparent 70%);
+        }
+
+        .spiderman-play-area model-viewer {
+            width: 100%;
+            height: 100%;
+            --poster-color: transparent;
+            background-color: transparent;
+            outline: none;
+            /* Extra Drop shadow for realism so he is super clear */
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
+        }
+
+        /* Horizontal Carousel Wrapper for Project Cards (Below Spiderman) */
+        .projects-carousel-wrapper {
+            width: 100%;
+            max-width: 1300px;
+            position: relative;
+            z-index: 15;
+            margin-bottom: 20px;
+        }
+
+        /* Horizontal Scroll Track (Swipe Left/Right) */
+        .projects-track {
+            display: flex;
+            gap: 25px;
+            overflow-x: auto; /* Enables horizontal scroll */
+            scroll-snap-type: x mandatory; /* Snaps cards into position cleanly */
+            padding: 20px 5px;
+            scrollbar-width: thin;
+            scrollbar-color: #00f2fe rgba(255,255,255,0.05);
+            /* Smooth touch scrolling on mobile */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Custom Scrollbar for the horizontal track */
+        .projects-track::-webkit-scrollbar {
+            height: 8px;
+        }
+        .projects-track::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .projects-track::-webkit-scrollbar-thumb {
+            background: #00f2fe;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+        }
+
+        .project-card {
+            flex: 0 0 clamp(280px, 60vw, 400px); /* Strictly controls width for side-by-side layout */
+            scroll-snap-align: center;
+            background: rgba(15, 15, 30, 0.5);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            border-radius: 16px;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.5s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 242, 254, 0.35);
+            border-color: #00f2fe;
+        }
+
+        .project-img-box {
+            width: 100%;
+            aspect-ratio: 16 / 9; /* Strict 16:9 cinematic aspect ratio */
+            overflow: hidden;
+            background: #020205;
+            position: relative;
+        }
+
+        .project-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .project-card:hover .project-img-box img {
+            transform: scale(1.08); /* Cinematic zoom effect */
+        }
+
+        .project-actions {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .view-link-btn {
+            background: transparent;
+            border: 2px solid rgba(0, 242, 254, 0.6);
+            color: #00f2fe;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: clamp(11px, 2.5vw, 14px);
+            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            width: 100%;
+            text-align: center;
+        }
+
+        .view-link-btn:hover {
+            background: #00f2fe;
+            color: #04040a;
+            border-color: #00f2fe;
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.8);
+        }
+
+        .load-more-btn {
+            background: rgba(0, 242, 254, 0.05);
+            border: 2px solid #00f2fe;
+            color: #00f2fe;
+            padding: 14px 40px;
+            border-radius: 40px;
+            font-weight: 800;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 30; 
+            position: relative;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .load-more-btn:hover {
+            background: #00f2fe;
+            color: #04040a;
+            box-shadow: 0 0 35px rgba(0, 242, 254, 0.8);
+            transform: translateY(-2px);
+        }
+
+        /* SECTION 5: High-Fidelity Responsive 3D Clean Fox Zone */
         .footer-spacer {
             min-height: 100vh; 
             background: radial-gradient(circle at center, #09091a 0%, #030308 100%);
@@ -769,6 +957,16 @@
             .leaf-divider {
                 height: 80px; 
                 margin-top: -120px;
+            }
+            .spiderman-play-area {
+                height: 35vh; /* Responsive height adjustment for phones */
+            }
+            .project-card {
+                flex: 0 0 85vw; /* Make cards wider on mobile for easy swiping */
+            }
+            .view-link-btn {
+                padding: 10px 15px;
+                font-size: 10px;
             }
             #fox-viewer {
                 height: 55vh; 
@@ -954,7 +1152,45 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- SECTION 4: High-Fidelity Responsive 3D Clean Fox Showcase Zone (Replacer) -->
+    <!-- SECTION 4: Our Projects (Firebase Connected, Swipe Carousel + Playable Spiderman) -->
+    <!-- ========================================================================= -->
+    <div class="projects-section" id="projects-section">
+        
+        <div class="projects-title-wrapper">
+            <h2>Our Projects</h2>
+            <p>Pinch to zoom Spiderman, and swipe left/right to explore cards</p>
+        </div>
+
+        <!-- Rigged 3D Playable Spiderman (Starts very small, zoomable with two fingers) -->
+        <div class="spiderman-play-area">
+            <model-viewer 
+                src="spiderman.glb" 
+                auto-rotate 
+                autoplay 
+                camera-controls
+                touch-action="pan-y"
+                shadow-intensity="1.5"
+                exposure="1.2"
+                camera-orbit="0deg 75deg 15m" 
+                min-camera-orbit="auto auto 1m" 
+                max-camera-orbit="auto auto 25m">
+            </model-viewer>
+        </div>
+        
+        <!-- Horizontal Swipe Carousel track mapped by JS -->
+        <div class="projects-carousel-wrapper">
+            <div class="projects-track" id="projects-grid">
+                <!-- Dynamically populated via Firebase -->
+            </div>
+        </div>
+        
+        <!-- Load More Button -->
+        <button id="load-more-btn" class="load-more-btn" onclick="loadMoreProjects()" style="display: none;">Load More Projects</button>
+        
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 5: High-Fidelity Responsive 3D Clean Fox Showcase Zone -->
     <!-- ========================================================================= -->
     <div class="footer-spacer">
         <div class="fox-title-wrapper" style="text-align: center; margin-bottom: 25px; z-index: 15;">
@@ -1002,6 +1238,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // Fetch Section 1 Scroll Texts
         const scrollTextsRef = ref(db, 'fanzoen_settings/scrollTexts');
         onValue(scrollTextsRef, (snapshot) => {
             const data = snapshot.val();
@@ -1011,6 +1248,7 @@
             }
         });
 
+        // Fetch Section 2 Slides Data
         const secondSectionRef = ref(db, 'fanzoen_settings/secondSection');
         onValue(secondSectionRef, (snapshot) => {
             const data = snapshot.val();
@@ -1019,6 +1257,22 @@
                 console.log("Firebase Slider Configured:", window.secondSectionData);
                 updateSecondSectionDOM();
             }
+        });
+
+        // Fetch Section 4 Projects Data automatically from Admin panel uploads
+        const projectsRef = ref(db, 'fanzoen_settings/projects');
+        onValue(projectsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                window.allProjects = Array.isArray(data) ? data : Object.values(data);
+            } else {
+                window.allProjects = []; 
+            }
+            // Reset and trigger initial layout render for Section 4
+            window.currentShownProjects = 0;
+            const track = document.getElementById("projects-grid");
+            if (track) track.innerHTML = "";
+            window.loadMoreProjects();
         });
     </script>
 
@@ -1058,6 +1312,11 @@
 
         window.scrollTexts = defaultScrollTexts;
         window.secondSectionData = defaultSecondSectionData;
+
+        // Variables for Section 4 Projects Load Pagination
+        window.allProjects = [];
+        window.currentShownProjects = 0;
+        const PROJECTS_PER_LOAD = 10; // Exactly 10 as per rules
 
         // Sequence 3 Specifications (Section 1)
         const totalFrames3 = 192;
@@ -1418,12 +1677,12 @@
                 }
             }
 
-            // Smooth Bee Visibility Control logic
-            const footerSpacer = document.querySelector('.footer-spacer');
-            const footerTop = footerSpacer ? footerSpacer.offsetTop : document.documentElement.scrollHeight;
-            const isNearFooter = (smoothScrollY + window.innerHeight) >= (footerTop + 40);
+            // Smooth Bee Visibility Control logic (Disables dynamically when near projects or footer)
+            const projSpacer = document.getElementById('projects-section');
+            const projTop = projSpacer ? projSpacer.offsetTop : document.documentElement.scrollHeight;
+            const isNearBottomSections = (smoothScrollY + window.innerHeight) >= (projTop + 40);
 
-            if (s1Bounded > 0.05 && !isNearFooter) {
+            if (s1Bounded > 0.05 && !isNearBottomSections) {
                 beeBox.style.opacity = "0";
                 beeBox.style.pointerEvents = "none";
                 beeGlow.style.opacity = "0";
@@ -1559,12 +1818,46 @@
             alert("Right action button clicked!");
         }
 
+        // Section 4 Logic: Dynamic Load More Pagination Engine onto the Horizontal Swipe Track
+        window.loadMoreProjects = function() {
+            const track = document.getElementById("projects-grid");
+            const loadMoreBtn = document.getElementById("load-more-btn");
+            
+            if (!track) return;
+
+            const nextBatch = window.allProjects.slice(window.currentShownProjects, window.currentShownProjects + PROJECTS_PER_LOAD);
+            
+            nextBatch.forEach(project => {
+                const card = document.createElement("div");
+                card.className = "project-card";
+                card.innerHTML = `
+                    <div class="project-img-box">
+                        <img src="${project.image || 'https://via.placeholder.com/640x360?text=No+Image+Available'}" alt="Project Thumbnail">
+                    </div>
+                    <div class="project-actions">
+                        <a href="${project.link || '#'}" target="_blank" class="view-link-btn">View Link</a>
+                    </div>
+                `;
+                track.appendChild(card);
+            });
+            
+            window.currentShownProjects += nextBatch.length;
+            
+            // Check if there are more projects beyond current display threshold to toggle the button
+            if (window.currentShownProjects >= window.allProjects.length || window.allProjects.length === 0) {
+                loadMoreBtn.style.display = "none";
+            } else {
+                loadMoreBtn.style.display = "block";
+            }
+        };
+
         // Initialization Pipeline execution
         loadAndExtractZip3(); 
         initScrollListener();
         initCursorTracker();
         initLeafTransitions(); 
         loadBeeDirect(); 
+
     </script>
 </body>
 </html>
