@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fanzoen - Admin Control Panel</title>
+    <!-- JSZip Library from CDN (Needed if any future asset packing is required) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #05050c;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        /* 1. Admin Header Area */
+        .admin-header {
+            width: 100%;
+            height: 70px;
+            background: rgba(10, 10, 20, 0.95);
+            border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-logo {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #00f2fe;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+        }
+
+        .status-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-badge.connected {
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+        }
+
+        .status-badge.disconnected {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+
+        /* Admin Main Layout Grid */
+        .admin-container {
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .span-full {
+            grid-column: 1 / -1; /* Makes the new section take full width */
+        }
+
+        @media (max-width: 1024px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+            .span-full {
+                grid-column: 1 / -1;
+            }
+        }
+
+        /* Glassmorphic Cards */
+        .admin-card {
+            background: rgba(20, 20, 35, 0.45);
+            border: 1px solid rgba(0, 242, 254, 0.15);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .card-heading {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00f2fe;
+            margin-bottom: 20px;
+            border-left: 4px solid #00f2fe;
+            padding-left: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Forms Elements */
+        .form-group {
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #b0b0cf;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"], input[type="number"], input[type="url"], textarea, select {
+            background: rgba(10, 10, 25, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 10px 14px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #00f2fe;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.25);
+        }
+        
+        select option {
+            background: #0a0a14;
+            color: #ffffff;
+        }
+
+        /* File Upload styling */
+        .upload-wrapper {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .custom-upload-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .custom-upload-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #00f2fe;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .upload-status {
+            font-size: 11px;
+            font-weight: 600;
+            color: #b0b0cf;
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            background: linear-gradient(90deg, #00f2fe, #4facfe);
+            border: none;
+            color: #05050c;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .action-btn:hover {
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .danger-btn {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .danger-btn:hover {
+            background: #e74c3c;
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .secondary-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .secondary-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #00f2fe;
+        }
+
+        /* Table and listing layouts */
+        .items-list {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Grid layout for project items specifically */
+        .projects-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .list-item {
+            background: rgba(10, 10, 20, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .project-list-item {
+            background: rgba(10, 10, 20, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .item-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow: hidden;
+        }
+
+        .item-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-sub {
+            font-size: 11px;
+            color: #72729a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            word-wrap: break-word;
+        }
+
+        /* Thumbnail previews */
+        .thumbnail-preview {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .thumbnail-preview img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .project-thumbnail {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 6px;
+            background: #020205;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .project-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .bg-preview-box {
+            width: 100%;
+            height: 120px;
+            border-radius: 8px;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: rgba(46, 204, 113, 0.15);
+            border: 1px solid #2ecc71;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: #2ecc71;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.4);
+            transform: translateY(120px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 9999;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Header with Live connection node status -->
+    <header class="admin-header">
+        <div class="header-title-box">
+            <div class="admin-logo">Fanzoen Admin</div>
+            <div id="db-status" class="status-badge disconnected">Firebase Disconnected</div>
+        </div>
+        <button class="secondary-btn" onclick="window.location.href='index.html'">View User Panel</button>
+    </header>
+
+    <!-- Admin Grid Workspace -->
+    <main class="admin-container">
+
+        <!-- Column A: Section 1 Manager (Scroll Texts) -->
+        <section class="admin-card">
+            <div class="card-heading">Section 1: Scroll Texts Card</div>
+            
+            <!-- Inline Addition Form -->
+            <form id="scroll-form" onsubmit="event.preventDefault(); addScrollTextItem();">
+                <div class="form-group">
+                    <label>Overlay Card Title</label>
+                    <input type="text" id="scroll-title-input" placeholder="e.g. Exploring Canopy Forest" required>
+                </div>
+                <div class="form-group">
+                    <label>Description Content</label>
+                    <textarea id="scroll-desc-input" rows="3" placeholder="Enter long description here..." required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Min Progress Range (0.0 to 1.0)</label>
+                        <input type="number" id="scroll-min-input" step="0.01" min="0" max="1" placeholder="e.g. 0.15" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Max Progress Range (0.0 to 1.0)</label>
+                        <input type="number" id="scroll-max-input" step="0.01" min="0" max="1" placeholder="e.g. 0.45" required>
+                    </div>
+                </div>
+                <button type="submit" class="secondary-btn" style="width: 100%;">Add New Scroll Text</button>
+            </form>
+
+            <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 25px 0;">
+
+            <!-- Rendered Items list -->
+            <div class="card-heading">Active Scroll Card Intervals</div>
+            <div class="items-list" id="scroll-items-list">
+                <!-- Javascript maps items here -->
+            </div>
+
+            <button class="action-btn" onclick="saveScrollTextsToFirebase()" style="margin-top: 25px;">Save Scroll Texts To Database</button>
+        </section>
+
+        <!-- Column B: Section 2 Manager (Benefit of our service) -->
+        <section class="admin-card">
+            <div class="card-heading">Section 2: Benefit of our service Manager</div>
+            
+            <!-- Background Image Manager -->
+            <div class="form-group">
+                <label>Parallax Background Image</label>
+                <div class="upload-wrapper">
+                    <label class="custom-upload-btn">
+                        Upload Image (via ImgBB)
+                        <input type="file" id="bg-file-input" accept="image/*" onchange="handleImgBBUpload('bg-file-input', 'bg-url-input', 'bg-preview', 'bg-upload-status')">
+                    </label>
+                    <span id="bg-upload-status" class="upload-status">Ready to Upload</span>
+                </div>
+                <input type="text" id="bg-url-input" placeholder="Or paste direct image URL here..." style="margin-top: 10px;" onchange="updateBgPreviewFromText()">
+                <div class="bg-preview-box" id="bg-preview"></div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 25px 0;">
+
+            <!-- Slides Form manager -->
+            <div class="card-heading">Add Dynamic Benefit Slide</div>
+            <form id="slide-form" onsubmit="event.preventDefault(); addNewSlideItem();">
+                <div class="form-group">
+                    <label>Clipart Image Asset</label>
+                    <div class="upload-wrapper">
+                        <label class="custom-upload-btn">
+                            Upload Clipart (via ImgBB)
+                            <input type="file" id="clipart-file-input" accept="image/*" onchange="handleImgBBUpload('clipart-file-input', 'clipart-url-input', 'clipart-form-preview', 'clipart-upload-status')">
+                        </label>
+                        <span id="clipart-upload-status" class="upload-status">Ready to Upload</span>
+                    </div>
+                    <div style="display: flex; gap: 15px; margin-top: 10px; align-items: center;">
+                        <input type="text" id="clipart-url-input" placeholder="Or paste direct clipart URL..." required onchange="updateClipartFormPreview()">
+                        <div class="thumbnail-preview" id="clipart-form-preview-box">
+                            <img id="clipart-form-preview" src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Cartoon_bee.svg">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Slide Title</label>
+                    <input type="text" id="slide-title-input" placeholder="e.g. Forest Canopy Showcase" required>
+                </div>
+                <div class="form-group">
+                    <label>Slide Description</label>
+                    <textarea id="slide-desc-input" rows="3" placeholder="Enter slide detail description..." required></textarea>
+                </div>
+                <button type="submit" class="secondary-btn" style="width: 100%;">Add Slide to Queue</button>
+            </form>
+
+            <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 25px 0;">
+
+            <!-- Active slides queue -->
+            <div class="card-heading">Active Slides Queue</div>
+            <div class="items-list" id="slides-items-list">
+                <!-- Javascript maps items here -->
+            </div>
+
+            <button class="action-btn" onclick="saveSectionTwoToFirebase()" style="margin-top: 25px;">Save Slider Configurations</button>
+        </section>
+
+        <!-- Column C (Full Width): Section 4 Manager (Our Service) -->
+        <section class="admin-card span-full">
+            <div class="card-heading">Section 4: Our Service Manager</div>
+            <p style="font-size: 12px; color: #72729a; margin-bottom: 20px;">Upload images (16:9 recommended) and attach external links. These will dynamically load in the User Panel's Section 4 grid (10 at a time).</p>
+            
+            <div class="form-row">
+                <!-- Project Addition Form -->
+                <form id="project-form" onsubmit="event.preventDefault(); addProjectItem();" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div class="form-group">
+                        <label>Service Thumbnail Image (16:9)</label>
+                        <div class="upload-wrapper">
+                            <label class="custom-upload-btn">
+                                Upload Image (via ImgBB)
+                                <input type="file" id="project-file-input" accept="image/*" onchange="handleImgBBUpload('project-file-input', 'project-img-input', 'project-form-preview', 'project-upload-status')">
+                            </label>
+                            <span id="project-upload-status" class="upload-status">Ready to Upload</span>
+                        </div>
+                        <input type="text" id="project-img-input" placeholder="Or paste direct image URL..." required style="margin-top: 10px;" onchange="updateProjectFormPreview()">
+                        
+                        <!-- Thumbnail preview box -->
+                        <div class="project-thumbnail" style="margin-top: 15px; width: 200px; display: none;" id="project-preview-wrapper">
+                            <img id="project-form-preview" src="">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>View Link URL (Target Website)</label>
+                        <input type="url" id="project-link-input" placeholder="https://example.com" required>
+                    </div>
+                    
+                    <button type="submit" class="secondary-btn" style="width: 100%; border-color: #00f2fe; color: #00f2fe;">+ Add Service To Grid</button>
+                </form>
+
+                <!-- Rendered Projects List -->
+                <div>
+                    <div class="card-heading" style="font-size: 14px; border-left-color: #4facfe;">Total Active Services (<span id="project-count">0</span>)</div>
+                    <div class="projects-list" id="projects-items-list">
+                        <!-- Javascript maps items here -->
+                    </div>
+                </div>
+            </div>
+
+            <button class="action-btn" onclick="saveProjectsToFirebase()" style="margin-top: 25px; max-width: 400px; display: block; margin-left: auto; margin-right: auto;">Save Services To Database</button>
+        </section>
+
+        <!-- Column D (Full Width): Section 5 Manager (Transparent Animated Slider) -->
+        <section class="admin-card span-full">
+            <div class="card-heading">Section 5: Transparent Slider Manager</div>
+            <p style="font-size: 12px; color: #72729a; margin-bottom: 20px;">Add dynamic stickers and text descriptions for the animated glassmorphic hanging box in Section 5.</p>
+            
+            <div class="form-row">
+                <!-- Section 5 Addition Form -->
+                <form id="section5-form" onsubmit="event.preventDefault(); addSection5Item();" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div class="form-group">
+                        <label>Dynamic Sticker (Appears from Right)</label>
+                        <div class="upload-wrapper">
+                            <label class="custom-upload-btn">
+                                Upload Image (via ImgBB)
+                                <input type="file" id="section5-file-input" accept="image/*" onchange="handleImgBBUpload('section5-file-input', 'section5-img-input', 'section5-form-preview', 'section5-upload-status')">
+                            </label>
+                            <span id="section5-upload-status" class="upload-status">Ready to Upload</span>
+                        </div>
+                        <input type="text" id="section5-img-input" placeholder="Or paste direct image URL..." required style="margin-top: 10px;" onchange="updateSection5FormPreview()">
+                        
+                        <!-- Thumbnail preview box for section 5 -->
+                        <div class="thumbnail-preview" style="margin-top: 15px; width: 100px; height: 100px; display: none;" id="section5-preview-wrapper">
+                            <img id="section5-form-preview" src="">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Hanging Box Description</label>
+                        <textarea id="section5-desc-input" rows="4" placeholder="Enter the text that appears in the hanging 3D glass box..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="secondary-btn" style="width: 100%; border-color: #00f2fe; color: #00f2fe;">+ Add Section 5 Item</button>
+                </form>
+
+                <!-- Rendered Section 5 List -->
+                <div>
+                    <div class="card-heading" style="font-size: 14px; border-left-color: #4facfe;">Total Active Items (<span id="section5-count">0</span>)</div>
+                    <div class="items-list" id="section5-items-list" style="max-height: 400px; overflow-y: auto;">
+                        <!-- Javascript maps items here -->
+                    </div>
+                </div>
+            </div>
+
+            <button class="action-btn" onclick="saveSection5ToFirebase()" style="margin-top: 25px; max-width: 400px; display: block; margin-left: auto; margin-right: auto;">Save Section 5 To Database</button>
+        </section>
+
+        <!-- Column E (Full Width): Section 6 Manager (Pricing Categories & Images) -->
+        <section class="admin-card span-full">
+            <div class="card-heading">Section 6: Pricing Categories & Images Manager</div>
+            <p style="font-size: 12px; color: #72729a; margin-bottom: 20px;">Create custom pricing categories (for Left/Right scrolling in UI) and upload multiple pricing images into them (for Top/Bottom scrolling). <strong style="color: #2ecc71;">Note: Old grid data is auto-migrated!</strong></p>
+            
+            <div class="form-row">
+                <!-- Part 1: Add Category -->
+                <form id="category-form" onsubmit="event.preventDefault(); addCategory();" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div class="card-heading" style="font-size: 14px; border-left-color: #2ecc71;">1. Create New Pricing Category</div>
+                    <div class="form-group">
+                        <label>Pricing Category Name</label>
+                        <input type="text" id="category-name-input" placeholder="e.g., Basic Plan, Premium Plan..." required>
+                    </div>
+                    <button type="submit" class="secondary-btn" style="width: 100%; border-color: #2ecc71; color: #2ecc71;">+ Create Pricing Category</button>
+                </form>
+
+                <!-- Part 2: Add Image to Category -->
+                <form id="category-image-form" onsubmit="event.preventDefault(); addImageToCategory();" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div class="card-heading" style="font-size: 14px; border-left-color: #f1c40f;">2. Upload Pricing Image to Category</div>
+                    
+                    <div class="form-group">
+                        <label>Select Pricing Category</label>
+                        <select id="category-select" required>
+                            <!-- Populated dynamically -->
+                            <option value="" disabled selected>Select a Pricing Category...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pricing Image Upload</label>
+                        <div class="upload-wrapper">
+                            <label class="custom-upload-btn">
+                                Upload Pricing Image (ImgBB)
+                                <input type="file" id="cat-file-input" accept="image/*" onchange="handleImgBBUpload('cat-file-input', 'cat-img-input', 'cat-form-preview', 'cat-upload-status')">
+                            </label>
+                            <span id="cat-upload-status" class="upload-status">Ready to Upload</span>
+                        </div>
+                        <input type="text" id="cat-img-input" placeholder="Or paste direct pricing image URL..." required style="margin-top: 10px;" onchange="updateCatFormPreview()">
+                        
+                        <div class="thumbnail-preview" style="margin-top: 15px; width: 100px; display: none;" id="cat-preview-wrapper">
+                            <img id="cat-form-preview" src="">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="secondary-btn" style="width: 100%; border-color: #f1c40f; color: #f1c40f;">+ Add Image to Pricing Category</button>
+                </form>
+            </div>
+
+            <!-- Rendered Categories & Images List -->
+            <div style="margin-top: 25px;">
+                <div class="card-heading" style="font-size: 14px; border-left-color: #4facfe;">Manage Pricing Categories & Images (<span id="category-count">0</span> Categories)</div>
+                <div id="categories-items-list" style="display: flex; flex-direction: column; gap: 15px; max-height: 500px; overflow-y: auto; padding-right: 5px;">
+                    <!-- Javascript maps items here -->
+                </div>
+            </div>
+
+            <button class="action-btn" onclick="saveCategoriesToFirebase()" style="margin-top: 25px; max-width: 400px; display: block; margin-left: auto; margin-right: auto;">Save Pricing Categories To Database</button>
+        </section>
+
+    </main>
+
+    <!-- Dynamic Neon Success Toast alerts -->
+    <div id="status-toast" class="toast">Changes saved successfully!</div>
+
+    <!-- Firebase SDK Modular integrations -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // Firebase configurations (Matches index.html perfectly)
+        const firebaseConfig = {
+          apiKey: "AIzaSyDm9kd5XneXxdFEqfVgCY-lkc8s2JlDdiA",
+          authDomain: "fanzoen.firebaseapp.com",
+          databaseURL: "https://fanzoen-default-rtdb.firebaseio.com",
+          projectId: "fanzoen",
+          storageBucket: "fanzoen.firebasestorage.app",
+          messagingSenderId: "30619278684",
+          appId: "1:30619278684:web:e28f09397392892c3c7599",
+          measurementId: "G-R8H7B5SS23"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Export values to window context securely so procedural functions can interact with SDK
+        window.db = db;
+        window.dbRef = ref;
+        window.dbSet = set;
+        window.dbOnValue = onValue;
+        window.dbGet = get;
+
+        // Monitor firebase real-time connection state
+        const connectedRef = ref(db, ".info/connected");
+        onValue(connectedRef, (snap) => {
+            const statusIndicator = document.getElementById("db-status");
+            if (snap.val() === true) {
+                statusIndicator.innerText = "Firebase Connected";
+                statusIndicator.className = "status-badge connected";
+            } else {
+                statusIndicator.innerText = "Firebase Disconnected";
+                statusIndicator.className = "status-badge disconnected";
+            }
+        });
+
+        // Initialize and load default workspace states
+        loadSettingsFromFirebase();
+    </script>
+
+    <script>
+        // ImgBB API Key provided by the user
+        const IMGBB_API_KEY = "75190ec2dbdc1177fc656369c605c1d7";
+
+        // Local state lists
+        let scrollTextsState = [];
+        let slidesState = [];
+        let projectsState = []; 
+        let section5State = []; 
+        let categoriesState = []; // State for Section 6 (Pricing Categories & Images)
+
+        // Dynamic upload handler using ImgBB API
+        async function handleImgBBUpload(fileInputId, urlInputId, previewId, statusTextId) {
+            const fileInput = document.getElementById(fileInputId);
+            const statusText = document.getElementById(statusTextId);
+            const urlInput = document.getElementById(urlInputId);
+            const previewEl = document.getElementById(previewId);
+
+            if (!fileInput.files || fileInput.files.length === 0) return;
+
+            statusText.innerText = "Uploading to ImgBB...";
+            statusText.style.color = "#00f2fe";
+
+            try {
+                const file = fileInput.files[0];
+                const formData = new FormData();
+                formData.append("image", file);
+
+                // Fetch POST request to ImgBB endpoint
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    const uploadedUrl = result.data.url;
+                    urlInput.value = uploadedUrl;
+                    
+                    // Update appropriate previews dynamically
+                    if (previewId === "bg-preview") {
+                        previewEl.style.backgroundImage = `url('${uploadedUrl}')`;
+                        previewEl.style.display = "block";
+                    } else if (previewId === "clipart-form-preview") {
+                        previewEl.src = uploadedUrl;
+                    } else if (previewId === "project-form-preview") {
+                        previewEl.src = uploadedUrl;
+                        document.getElementById("project-preview-wrapper").style.display = "flex";
+                    } else if (previewId === "section5-form-preview") {
+                        previewEl.src = uploadedUrl;
+                        document.getElementById("section5-preview-wrapper").style.display = "flex";
+                    } else if (previewId === "cat-form-preview") {
+                        previewEl.src = uploadedUrl;
+                        document.getElementById("cat-preview-wrapper").style.display = "flex";
+                    }
+
+                    statusText.innerText = "Upload Successful!";
+                    statusText.style.color = "#2ecc71";
+                } else {
+                    throw new Error(result.error.message || "Upload operation failed.");
+                }
+
+            } catch (error) {
+                console.error("ImgBB upload error:", error);
+                statusText.innerText = "Upload Failed: " + error.message;
+                statusText.style.color = "#e74c3c";
+            }
+        }
+
+        // Live text preview updates
+        function updateBgPreviewFromText() {
+            const url = document.getElementById("bg-url-input").value.trim();
+            const preview = document.getElementById("bg-preview");
+            if (url) {
+                preview.style.backgroundImage = `url('${url}')`;
+                preview.style.display = "block";
+            } else {
+                preview.style.display = "none";
+            }
+        }
+
+        function updateClipartFormPreview() {
+            const url = document.getElementById("clipart-url-input").value.trim();
+            const preview = document.getElementById("clipart-form-preview");
+            if (url) {
+                preview.src = url;
+            }
+        }
+
+        function updateProjectFormPreview() {
+            const url = document.getElementById("project-img-input").value.trim();
+            const preview = document.getElementById("project-form-preview");
+            const wrapper = document.getElementById("project-preview-wrapper");
+            if (url) {
+                preview.src = url;
+                wrapper.style.display = "flex";
+            } else {
+                wrapper.style.display = "none";
+            }
+        }
+
+        function updateSection5FormPreview() {
+            const url = document.getElementById("section5-img-input").value.trim();
+            const preview = document.getElementById("section5-form-preview");
+            const wrapper = document.getElementById("section5-preview-wrapper");
+            if (url) {
+                preview.src = url;
+                wrapper.style.display = "flex";
+            } else {
+                wrapper.style.display = "none";
+            }
+        }
+
+        function updateCatFormPreview() {
+            const url = document.getElementById("cat-img-input").value.trim();
+            const preview = document.getElementById("cat-form-preview");
+            const wrapper = document.getElementById("cat-preview-wrapper");
+            if (url) {
+                preview.src = url;
+                wrapper.style.display = "flex";
+            } else {
+                wrapper.style.display = "none";
+            }
+        }
+
+        // Load existing settings on panel activation
+        async function loadSettingsFromFirebase() {
+            try {
+                // Fetch scroll triggered text blocks
+                const scrollTextsRef = window.dbRef(window.db, "fanzoen_settings/scrollTexts");
+                window.dbOnValue(scrollTextsRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        scrollTextsState = Array.isArray(data) ? data : Object.values(data);
+                    } else {
+                        // fallback to default initial structures
+                        scrollTextsState = [
+                            {
+                                title: "Exploring Rainy Forest",
+                                desc: "Watch the frame timeline transition smoothly as you explore the forest landscape. Every frame captures the serene tranquility of the nature video playing below.",
+                                minProgress: 0.15,
+                                maxProgress: 0.45
+                            },
+                            {
+                                title: "Dynamic 3D Flight Control",
+                                desc: "Interact with the free-flying 3D Bee. Drag your pointer across the viewport, and notice how the bee aligns with dynamic tilting and custom flight mechanics.",
+                                minProgress: 0.50,
+                                maxProgress: 0.80
+                            }
+                        ];
+                    }
+                    renderScrollTexts();
+                });
+
+                // Fetch Section 2 slider settings
+                const secondSectionRef = window.dbRef(window.db, "fanzoen_settings/secondSection");
+                window.dbOnValue(secondSectionRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        document.getElementById("bg-url-input").value = data.bgImage || "";
+                        updateBgPreviewFromText();
+
+                        slidesState = data.slides ? (Array.isArray(data.slides) ? data.slides : Object.values(data.slides)) : [];
+                    } else {
+                        // fallback to default initial structures
+                        slidesState = [
+                            {
+                                clipart: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Cartoon_bee.svg",
+                                title: "Benefit of our service",
+                                desc: "This dynamic title and content can be updated in real-time from the Firebase Admin Panel. Explore different slides with rich descriptions and clip art assets."
+                            },
+                            {
+                                clipart: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Cartoon_bee.svg",
+                                title: "Admin Managed Experience",
+                                desc: "This second slide showcases how left/right indicator transitions work smoothly. Change clipart images and descriptive texts dynamically anytime."
+                            }
+                        ];
+                    }
+                    renderSlides();
+                });
+
+                // Fetch Section 4 Services Data
+                const projectsRef = window.dbRef(window.db, "fanzoen_settings/projects");
+                window.dbOnValue(projectsRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        projectsState = Array.isArray(data) ? data : Object.values(data);
+                    } else {
+                        projectsState = [];
+                    }
+                    renderProjects();
+                });
+
+                // Fetch Section 5 Transparent Slider Data
+                const section5Ref = window.dbRef(window.db, "fanzoen_settings/section5");
+                window.dbOnValue(section5Ref, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        section5State = Array.isArray(data) ? data : Object.values(data);
+                    } else {
+                        section5State = [];
+                    }
+                    renderSection5();
+                });
+
+                // Fetch Section 6 Pricing Categories & Images Data (WITH AUTO MIGRATION FROM OLD DATA)
+                const categoriesRef = window.dbRef(window.db, "fanzoen_settings/pricing_categories");
+                window.dbOnValue(categoriesRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        categoriesState = Array.isArray(data) ? data : Object.values(data);
+                        // Ensure all categories have an images array initialized
+                        categoriesState.forEach(cat => {
+                            if (!cat.images) cat.images = [];
+                        });
+                        renderCategories();
+                    } else {
+                        // AUTOMATIC MIGRATION: If no new categories exist, check for old "pricing" grid data
+                        const oldPricingRef = window.dbRef(window.db, "fanzoen_settings/pricing");
+                        window.dbGet(oldPricingRef).then((oldSnap) => {
+                            const oldData = oldSnap.val();
+                            if (oldData) {
+                                let oldPricing = Array.isArray(oldData) ? oldData : Object.values(oldData);
+                                categoriesState = [];
+                                oldPricing.forEach((row, idx) => {
+                                    if (row) {
+                                        categoriesState.push({
+                                            name: `Old Pricing Row ${idx}`,
+                                            images: Array.isArray(row) ? row.filter(url => url) : Object.values(row).filter(url => url)
+                                        });
+                                    }
+                                });
+                                renderCategories();
+                                // Auto-save to new format so it doesn't get lost
+                                saveCategoriesToFirebase();
+                            } else {
+                                categoriesState = [];
+                                renderCategories();
+                            }
+                        }).catch(err => {
+                            categoriesState = [];
+                            renderCategories();
+                        });
+                    }
+                });
+
+            } catch (err) {
+                console.error("Database connection initialization failed:", err);
+            }
+        }
+
+        // Render scroll texts state to DOM list
+        function renderScrollTexts() {
+            const list = document.getElementById("scroll-items-list");
+            list.innerHTML = "";
+
+            scrollTextsState.forEach((item, idx) => {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "list-item";
+                itemDiv.innerHTML = `
+                    <div class="item-details">
+                        <div class="item-title">${item.title}</div>
+                        <div class="item-sub">Trigger Range: ${item.minProgress} - ${item.maxProgress}</div>
+                    </div>
+                    <button class="danger-btn" onclick="deleteScrollItem(${idx})">Delete</button>
+                `;
+                list.appendChild(itemDiv);
+            });
+        }
+
+        // Render slides state to DOM list
+        function renderSlides() {
+            const list = document.getElementById("slides-items-list");
+            list.innerHTML = "";
+
+            slidesState.forEach((item, idx) => {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "list-item";
+                itemDiv.innerHTML = `
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <div class="thumbnail-preview">
+                            <img src="${item.clipart || 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Cartoon_bee.svg'}">
+                        </div>
+                        <div class="item-details">
+                            <div class="item-title">${item.title}</div>
+                            <div class="item-sub">Slide Index: ${idx + 1}</div>
+                        </div>
+                    </div>
+                    <button class="danger-btn" onclick="deleteSlideItem(${idx})">Delete</button>
+                `;
+                list.appendChild(itemDiv);
+            });
+        }
+
+        // Render Services state to DOM grid
+        function renderProjects() {
+            const list = document.getElementById("projects-items-list");
+            const counter = document.getElementById("project-count");
+            list.innerHTML = "";
+            counter.innerText = projectsState.length;
+
+            projectsState.forEach((item, idx) => {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "project-list-item";
+                itemDiv.innerHTML = `
+                    <div class="project-thumbnail">
+                        <img src="${item.image || 'https://via.placeholder.com/640x360?text=No+Image'}" alt="Service Thumbnail">
+                    </div>
+                    <div class="item-details">
+                        <div class="item-title">Service #${idx + 1}</div>
+                        <a href="${item.link}" target="_blank" class="item-sub" style="color: #00f2fe; text-decoration: none;">🔗 ${item.link}</a>
+                    </div>
+                    <button class="danger-btn" onclick="deleteProjectItem(${idx})" style="width: 100%; margin-top: 5px;">Delete Service</button>
+                `;
+                list.appendChild(itemDiv);
+            });
+        }
+
+        // Render Section 5 State to DOM list
+        function renderSection5() {
+            const list = document.getElementById("section5-items-list");
+            const counter = document.getElementById("section5-count");
+            list.innerHTML = "";
+            counter.innerText = section5State.length;
+
+            section5State.forEach((item, idx) => {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "list-item";
+                itemDiv.innerHTML = `
+                    <div style="display: flex; gap: 15px; align-items: center; width: 100%;">
+                        <div class="thumbnail-preview" style="width: 50px; height: 50px; flex-shrink: 0;">
+                            <img src="${item.sticker || 'https://via.placeholder.com/50'}" style="width: 100%; height: 100%; object-fit: contain;">
+                        </div>
+                        <div class="item-details" style="flex-grow: 1;">
+                            <div class="item-title">Item #${idx + 1}</div>
+                            <div class="item-sub" style="white-space: normal; line-height: 1.4;">${item.desc}</div>
+                        </div>
+                        <button class="danger-btn" onclick="deleteSection5Item(${idx})">Delete</button>
+                    </div>
+                `;
+                list.appendChild(itemDiv);
+            });
+        }
+        
+        // Render Section 6 Pricing Categories State to DOM list
+        function renderCategories() {
+            const list = document.getElementById("categories-items-list");
+            const counter = document.getElementById("category-count");
+            const selectDrop = document.getElementById("category-select");
+            
+            list.innerHTML = "";
+            selectDrop.innerHTML = '<option value="" disabled selected>Select a Pricing Category...</option>';
+            counter.innerText = categoriesState.length;
+
+            categoriesState.forEach((cat, catIdx) => {
+                // Populate Dropdown
+                const opt = document.createElement("option");
+                opt.value = catIdx;
+                opt.innerText = cat.name;
+                selectDrop.appendChild(opt);
+
+                // Populate Visual List for Admin to view and edit
+                const catDiv = document.createElement("div");
+                catDiv.style.background = "rgba(10, 10, 20, 0.6)";
+                catDiv.style.border = "1px solid rgba(255,255,255,0.05)";
+                catDiv.style.borderRadius = "8px";
+                catDiv.style.padding = "15px";
+                
+                // Header of Category
+                let html = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">
+                        <div class="item-title" style="color: #2ecc71; font-size: 16px;">📁 ${cat.name} <span style="color: #72729a; font-size: 12px; margin-left: 10px;">(${cat.images ? cat.images.length : 0} Pricing Images)</span></div>
+                        <button class="danger-btn" onclick="deleteCategory(${catIdx})">Delete Pricing Category</button>
+                    </div>
+                    <div style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px;">
+                `;
+
+                // Images inside category
+                if (cat.images && cat.images.length > 0) {
+                    cat.images.forEach((imgUrl, imgIdx) => {
+                        html += `
+                            <div style="position: relative; min-width: 100px; width: 100px; height: 100px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); background: #000;">
+                                <img src="${imgUrl}" style="width: 100%; height: 100%; object-fit: cover;">
+                                <button onclick="deleteImageFromCategory(${catIdx}, ${imgIdx})" style="position: absolute; top: 4px; right: 4px; background: rgba(231, 76, 60, 0.95); border: none; color: white; border-radius: 4px; width: 22px; height: 22px; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center;">X</button>
+                            </div>
+                        `;
+                    });
+                } else {
+                    html += `<div style="font-size: 12px; color: #72729a;">No images in this category yet. Upload from above.</div>`;
+                }
+
+                html += `</div>`;
+                catDiv.innerHTML = html;
+                list.appendChild(catDiv);
+            });
+        }
+
+        // State manipulation actions
+        function addScrollTextItem() {
+            const title = document.getElementById("scroll-title-input").value.trim();
+            const desc = document.getElementById("scroll-desc-input").value.trim();
+            const minProgress = parseFloat(document.getElementById("scroll-min-input").value);
+            const maxProgress = parseFloat(document.getElementById("scroll-max-input").value);
+
+            if (minProgress >= maxProgress) {
+                alert("Minimum progress value must be smaller than Maximum progress.");
+                return;
+            }
+
+            scrollTextsState.push({ title, desc, minProgress, maxProgress });
+            renderScrollTexts();
+
+            // Clear input form cleanly
+            document.getElementById("scroll-title-input").value = "";
+            document.getElementById("scroll-desc-input").value = "";
+            document.getElementById("scroll-min-input").value = "";
+            document.getElementById("scroll-max-input").value = "";
+        }
+
+        function deleteScrollItem(index) {
+            scrollTextsState.splice(index, 1);
+            renderScrollTexts();
+        }
+
+        function addNewSlideItem() {
+            const clipart = document.getElementById("clipart-url-input").value.trim();
+            const title = document.getElementById("slide-title-input").value.trim();
+            const desc = document.getElementById("slide-desc-input").value.trim();
+
+            slidesState.push({ clipart, title, desc });
+            renderSlides();
+
+            // Clear form inputs cleanly
+            document.getElementById("clipart-url-input").value = "";
+            document.getElementById("slide-title-input").value = "";
+            document.getElementById("slide-desc-input").value = "";
+            document.getElementById("clipart-form-preview").src = "https://upload.wikimedia.org/wikipedia/commons/e/ec/Cartoon_bee.svg";
+        }
+
+        function deleteSlideItem(index) {
+            slidesState.splice(index, 1);
+            renderSlides();
+        }
+
+        // Service State manipulation actions
+        function addProjectItem() {
+            const image = document.getElementById("project-img-input").value.trim();
+            const link = document.getElementById("project-link-input").value.trim();
+
+            projectsState.push({ image, link });
+            renderProjects();
+
+            // Clear form inputs cleanly
+            document.getElementById("project-img-input").value = "";
+            document.getElementById("project-link-input").value = "";
+            document.getElementById("project-preview-wrapper").style.display = "none";
+            document.getElementById("project-upload-status").innerText = "Ready to Upload";
+            document.getElementById("project-upload-status").style.color = "#b0b0cf";
+        }
+
+        function deleteProjectItem(index) {
+            projectsState.splice(index, 1);
+            renderProjects();
+        }
+
+        // Section 5 State manipulation actions
+        function addSection5Item() {
+            const sticker = document.getElementById("section5-img-input").value.trim();
+            const desc = document.getElementById("section5-desc-input").value.trim();
+
+            section5State.push({ sticker, desc });
+            renderSection5();
+
+            // Clear form inputs cleanly
+            document.getElementById("section5-img-input").value = "";
+            document.getElementById("section5-desc-input").value = "";
+            document.getElementById("section5-preview-wrapper").style.display = "none";
+            document.getElementById("section5-upload-status").innerText = "Ready to Upload";
+            document.getElementById("section5-upload-status").style.color = "#b0b0cf";
+        }
+
+        function deleteSection5Item(index) {
+            section5State.splice(index, 1);
+            renderSection5();
+        }
+
+        // Section 6 Pricing Categories manipulation actions
+        function addCategory() {
+            const name = document.getElementById("category-name-input").value.trim();
+            if (name) {
+                categoriesState.push({ name: name, images: [] });
+                renderCategories();
+                document.getElementById("category-name-input").value = "";
+            }
+        }
+
+        function deleteCategory(catIdx) {
+            if (confirm("Are you sure you want to delete this pricing category and all its images entirely?")) {
+                categoriesState.splice(catIdx, 1);
+                renderCategories();
+            }
+        }
+
+        function addImageToCategory() {
+            const catIdx = document.getElementById("category-select").value;
+            const imgUrl = document.getElementById("cat-img-input").value.trim();
+            
+            if (catIdx === "" || !imgUrl) {
+                alert("Please select a valid Pricing Category and provide an Image URL.");
+                return;
+            }
+
+            if (!categoriesState[catIdx].images) {
+                categoriesState[catIdx].images = [];
+            }
+            
+            categoriesState[catIdx].images.push(imgUrl);
+            renderCategories();
+
+            // Clear image form safely
+            document.getElementById("cat-img-input").value = "";
+            document.getElementById("cat-preview-wrapper").style.display = "none";
+            document.getElementById("cat-upload-status").innerText = "Ready to Upload";
+            document.getElementById("cat-upload-status").style.color = "#b0b0cf";
+        }
+
+        function deleteImageFromCategory(catIdx, imgIdx) {
+            categoriesState[catIdx].images.splice(imgIdx, 1);
+            renderCategories();
+        }
+
+        // Database write calls
+        async function saveScrollTextsToFirebase() {
+            try {
+                const scrollTextsRef = window.dbRef(window.db, "fanzoen_settings/scrollTexts");
+                await window.dbSet(scrollTextsRef, scrollTextsState);
+                triggerToast("Scroll Card texts successfully saved!");
+            } catch (err) {
+                console.error("Save failed:", err);
+                alert("Database save error: " + err.message);
+            }
+        }
+
+        async function saveSectionTwoToFirebase() {
+            try {
+                const bgImage = document.getElementById("bg-url-input").value.trim();
+                const secondSectionRef = window.dbRef(window.db, "fanzoen_settings/secondSection");
+                
+                const saveData = {
+                    bgImage,
+                    slides: slidesState
+                };
+
+                await window.dbSet(secondSectionRef, saveData);
+                triggerToast("Slider configurations successfully saved!");
+            } catch (err) {
+                console.error("Save failed:", err);
+                alert("Database save error: " + err.message);
+            }
+        }
+
+        async function saveProjectsToFirebase() {
+            try {
+                const projectsRef = window.dbRef(window.db, "fanzoen_settings/projects");
+                await window.dbSet(projectsRef, projectsState);
+                triggerToast("Services Grid successfully saved!");
+            } catch (err) {
+                console.error("Save failed:", err);
+                alert("Database save error: " + err.message);
+            }
+        }
+
+        async function saveSection5ToFirebase() {
+            try {
+                const sec5Ref = window.dbRef(window.db, "fanzoen_settings/section5");
+                await window.dbSet(sec5Ref, section5State);
+                triggerToast("Section 5 Configurations successfully saved!");
+            } catch (err) {
+                console.error("Save failed:", err);
+                alert("Database save error: " + err.message);
+            }
+        }
+
+        async function saveCategoriesToFirebase() {
+            try {
+                const categoriesRef = window.dbRef(window.db, "fanzoen_settings/pricing_categories");
+                await window.dbSet(categoriesRef, categoriesState);
+                triggerToast("Pricing Categories & Images successfully saved!");
+            } catch (err) {
+                console.error("Save failed:", err);
+                alert("Database save error: " + err.message);
+            }
+        }
+
+        // Animated neon toast controller
+        function triggerToast(message) {
+            const toast = document.getElementById("status-toast");
+            toast.innerText = message;
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
